@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using OnlineCourses2.Models;
@@ -30,7 +31,9 @@ namespace OnlineCourses2.Data
                     .HasPrecision(10, 2);
 
         }
-    }
+        
 
+    }
+    
 }
 

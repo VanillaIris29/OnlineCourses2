@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnlineCourses2.Data;
-using Microsoft.AspNetCore.Identity;
-using OnlineCourses2.Data;
 using OnlineCourses2.Models;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -14,8 +14,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddRoles<IdentityRole>()
@@ -23,11 +21,17 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
 
 
 var app = builder.Build();
+
+
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     await RoleSeeder.SeedRolesAsync(roleManager);
+    await RoleSeeder.SeedAdminAsync(userManager, roleManager);
+    await RoleSeeder.SeedOrganizerAsync(userManager, roleManager);
 }
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -54,3 +58,4 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
