@@ -10,23 +10,37 @@ namespace OnlineCourses2.Models
         [MinLength(3)]
         public string Title { get; set; } = null!;
 
+        [Required]
+        [MinLength(10)]
+        public string ShortDescription { get; set; } = null!;
+
         public string? Description { get; set; }
 
-        [Range(1, int.MaxValue)]
-        public int LessonsCount { get; set; }
+        [Range(1, 1000)]
+        public int DurationHours { get; set; }
 
-        public bool IsFull { get; set; }
+        [Range(0, 9999)]
+        public decimal Price { get; set; }
+
+        [Range(10, 20)]
+        public int MaxParticipants { get; set; }
+
+        public int CurrentParticipants { get; set; }
+
+        public string? ImagePath { get; set; }
 
         // Category
         [Required]
         public string CategoryId { get; set; } = null!;
         public Category? Category { get; set; }
 
-        // Organizer (User)
-        public string? OrganizerId { get; set; }
+        // Organizer
+        [Required]
+        public string OrganizerId { get; set; } = null!;
         public ApplicationUser? Organizer { get; set; }
 
         public ICollection<UserCourse>? UserCourses { get; set; }
+
     }
 }
 

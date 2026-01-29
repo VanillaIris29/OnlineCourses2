@@ -10,5 +10,8 @@
 
         public DateTime EnrolledOn { get; set; } = DateTime.UtcNow;
 
+        public bool IsCompleted { get; set; }
+
+
     }
 }

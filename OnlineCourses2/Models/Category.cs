@@ -11,6 +11,7 @@ namespace OnlineCourses2.Models
         public string Name { get; set; } = null!;
 
         public ICollection<Course>? Courses { get; set; }
+
     }
 }
 

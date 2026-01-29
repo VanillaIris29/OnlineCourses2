@@ -5,24 +5,32 @@ using OnlineCourses2.Models;
 
 namespace OnlineCourses2.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
-        public DbSet<Category> Categories => Set<Category>();
-        public DbSet<Course> Courses => Set<Course>();
-        public DbSet<UserCourse> UserCourses => Set<UserCourse>();
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
+            : base(options) { }
 
-        }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<UserCourse> UserCourses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<UserCourse>()
                 .HasKey(uc => new { uc.UserId, uc.CourseId });
+            builder.Entity<Course>()
+      .HasOne(c => c.Organizer)
+      .WithMany(u => u.CreatedCourses)
+      .HasForeignKey(c => c.OrganizerId)
+      .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Course>()
+                    .Property(c => c.Price)
+                    .HasPrecision(10, 2);
+
         }
     }
+
 }
+
