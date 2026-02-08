@@ -40,6 +40,28 @@ public class CourseController : Controller
 
         var organizer = await _userManager.GetUserAsync(User);
 
+        string? imagePath = null;
+
+        // Handle image upload
+        if (model.ImageFile != null)
+        {
+            string folder = Path.Combine("wwwroot", "images", "courses");
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImageFile.FileName);
+            string filePath = Path.Combine(folder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await model.ImageFile.CopyToAsync(stream);
+            }
+
+            imagePath = "/images/courses/" + fileName;
+        }
+
+
         var course = new Course
         {
             Title = model.Title,
@@ -50,7 +72,8 @@ public class CourseController : Controller
             MaxParticipants = model.MaxParticipants,
             CategoryId = model.CategoryId,
             OrganizerId = organizer.Id,
-            CurrentParticipants = 0
+            CurrentParticipants = 0,
+            ImagePath = imagePath
         };
 
         _context.Courses.Add(course);
@@ -58,6 +81,16 @@ public class CourseController : Controller
 
         return RedirectToAction("MyCourses");
     }
+    [AllowAnonymous]
+    public async Task<IActionResult> All()
+    {
+        var courses = await _context.Courses
+            .Include(c => c.Category)
+            .ToListAsync();
+
+        return View(courses);
+    }
+
     [HttpGet]
     public async Task<IActionResult> MyCourses()
     {
@@ -71,6 +104,116 @@ public class CourseController : Controller
         return View(courses);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Edit(string id)
+    {
+        var course = await _context.Courses
+            .Include(c => c.Category)
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (course == null)
+            return NotFound();
+
+        var vm = new EditCourseViewModel
+        {
+            Id = course.Id,
+            Title = course.Title,
+            ShortDescription = course.ShortDescription,
+            Description = course.Description,
+            DurationHours = course.DurationHours,
+            Price = course.Price,
+            MaxParticipants = course.MaxParticipants,
+            CategoryId = course.CategoryId,
+            ExistingImagePath = course.ImagePath,
+            Categories = await _context.Categories.ToListAsync()
+        };
+
+        return View(vm);
+    }
+    [HttpPost]
+    public async Task<IActionResult> Edit(EditCourseViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            model.Categories = await _context.Categories.ToListAsync();
+            return View(model);
+        }
+
+        var course = await _context.Courses.FindAsync(model.Id);
+
+        if (course == null)
+            return NotFound();
+
+        // Update fields
+        course.Title = model.Title;
+        course.ShortDescription = model.ShortDescription;
+        course.Description = model.Description;
+        course.DurationHours = model.DurationHours;
+        course.Price = model.Price;
+        course.MaxParticipants = model.MaxParticipants;
+        course.CategoryId = model.CategoryId;
+
+        // Handle new image upload
+        if (model.ImageFile != null)
+        {
+            string folder = Path.Combine("wwwroot", "images", "courses");
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImageFile.FileName);
+            string filePath = Path.Combine(folder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await model.ImageFile.CopyToAsync(stream);
+            }
+
+            course.ImagePath = "/images/courses/" + fileName;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("MyCourses");
+    }
+    /* [HttpGet]
+     public async Task<IActionResult> Details(string id)
+     {
+         var course = await _context.Courses
+             .Include(c => c.Category)
+             .FirstOrDefaultAsync(c => c.Id == id);
+
+         if (course == null)
+             return NotFound();
+
+         return View(course);
+     }*/
+    [HttpGet]
+    public async Task<IActionResult> Manage()
+    {
+        var user = await _userManager.GetUserAsync(User);
+
+        var courses = await _context.Courses
+            .Where(c => c.OrganizerId == user.Id)
+            .Include(c => c.Category)
+            .ToListAsync();
+
+        return View(courses);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var course = await _context.Courses.FindAsync(id);
+
+        if (course == null)
+            return NotFound();
+
+        _context.Courses.Remove(course);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("MyCourses");
+    }
 
 }
 

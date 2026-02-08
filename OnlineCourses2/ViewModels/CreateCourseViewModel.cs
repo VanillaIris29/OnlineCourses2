@@ -13,7 +13,9 @@ namespace OnlineCourses2.ViewModels
 
             public string CategoryId { get; set; } = "";
         public List<Category> Categories { get; set; } = new();
+        public IFormFile? ImageFile { get; set; }
+
     }
 
-    
+
 }
