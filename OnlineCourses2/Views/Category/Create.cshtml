@@ -1,0 +1,44 @@
+﻿@model OnlineCourses2.ViewModels.CreateCategoryViewModel
+
+@{
+    ViewData["Title"] = "Създай категория";
+}
+
+<main style="max-width: 600px; margin: 40px auto; padding: 0 20px;">
+
+    <h2 style="margin-bottom: 25px;">Създаване на категория</h2>
+
+    <form method="post" style="
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    ">
+
+        <div style="margin-bottom: 15px;">
+            <label>Име на категория</label>
+            <input asp-for="Name"
+                   style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;" />
+            <span asp-validation-for="Name" style="color:red;"></span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between;">
+            <a asp-action="Index" asp-controller="Category" style="color:#555; text-decoration:none;">
+                ← Назад
+            </a>
+
+            <button type="submit"
+                    style="background-color:#81d8b0; color:white; border:none;
+                           padding:10px 25px; border-radius:6px; cursor:pointer;">
+                Създай
+            </button>
+        </div>
+
+    </form>
+
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
