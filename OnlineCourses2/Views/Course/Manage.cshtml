@@ -36,7 +36,6 @@
                             overflow: hidden;
                         ">
 
-                    <!-- Image -->
                     @if (!string.IsNullOrEmpty(course.ImagePath))
                     {
                         <img src="@course.ImagePath"
@@ -58,14 +57,12 @@
 
                         <div style="display:flex; gap:10px; margin-top:15px;">
 
-                            <!-- EDIT (grey) -->
                             <a asp-controller="Course" asp-action="Edit" asp-route-id="@course.Id"
                                style="background:#bfbfbf; color:white; padding:10px 20px;
                                               border-radius:6px; text-decoration:none; font-weight:500;">
                                 Редактирай
                             </a>
 
-                            <!-- DELETE (green) -->
                             <form asp-controller="Course" asp-action="Delete" asp-route-id="@course.Id" method="post"
                                   onsubmit="return confirm('Сигурни ли сте, че искате да изтриете този курс?');">
                                 <button type="submit"

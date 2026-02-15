@@ -1,4 +1,4 @@
-html {
+/*html {
     font-size: 14px;
 }
 
@@ -19,4 +19,130 @@ html {
 
 body {
     margin-bottom: 60px;
+}*/
+/* --- ОСНОВНИ НАСТРОЙКИ --- */
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Предотвратява хоризонтален скрол от диагонала */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- ХЕДЪР И ПАСТЕЛЕН ФОН --- */
+.header-main-container {
+    background-color: #a8e6cf !important; /* Точният пастелен цвят от дизайна */
+    position: relative;
+    padding: 25px 0 60px 0;
+    width: 100%;
+    border: none;
+}
+
+/* --- БЯЛАТА РАМКА (НАВИГАЦИЯ) --- */
+.custom-navbar {
+    border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+    border-radius: 50px !important;
+    padding: 10px 35px;
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+}
+
+/* --- ЛОГО И ЛИНКОВЕ --- */
+.brand-logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.nav-links a {
+    color: white !important;
+    text-decoration: none !important;
+    margin: 0 15px;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.nav-links a:hover {
+    opacity: 0.8;
+}
+
+/* --- LOGIN / LOGOUT СЕКЦИЯ (Оправя подредбата) --- */
+.auth-box ul {
+    display: flex !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    align-items: center;
+}
+
+.auth-box li {
+    margin-left: 15px !important;
+}
+
+.auth-box a, 
+.auth-box button, 
+.auth-box span {
+    color: white !important;
+    text-decoration: none !important;
+    font-weight: 500;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    cursor: pointer;
+}
+
+/* --- ДИАГОНАЛЪТ (Clip-path) --- */
+.header-diagonal {
+    position: absolute;
+    bottom: -119px; /* Долепя се до зеления блок */
+    left: 0;
+    width: 48%;
+    height: 120px;
+    background-color: #c9ffe5 !important;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    z-index: -1;
+}
+
+/* --- ОСНОВНО СЪДЪРЖАНИЕ --- */
+.content-wrapper {
+    margin-top: 100px; /* Прави място за диагонала */
+    margin-bottom: 60px;
+}
+
+/* --- БУТОНИ И ФОРМИ (Bootstrap Overrides) --- */
+.btn-custom-green {
+    background-color: #88d4b7;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    padding: 8px 25px;
+}
+
+.btn:focus, .btn:active:focus, .form-control:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #b2e2d2;
+}
+
+/* --- ФУТЪР --- */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+    background-color: white;
+    border-top: 1px solid #dee2e6;
 }

@@ -174,7 +174,7 @@ public class CourseController : Controller
 
         await _context.SaveChangesAsync();
 
-        return RedirectToAction("MyCourses");
+        return RedirectToAction("Manage");
     }
     /* [HttpGet]
      public async Task<IActionResult> Details(string id)

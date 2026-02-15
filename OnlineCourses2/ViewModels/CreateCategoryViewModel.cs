@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using OnlineCourses2.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnlineCourses2.ViewModels
 {
@@ -7,6 +8,9 @@ namespace OnlineCourses2.ViewModels
         [Required]
         [MinLength(3)]
         public string Name { get; set; } = "";
-
+        public List<Category> Categories { get; set; } = new();
     }
+
+
 }
+

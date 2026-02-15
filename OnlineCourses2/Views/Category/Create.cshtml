@@ -2,9 +2,23 @@
 
 @{
     ViewData["Title"] = "Създай категория";
-}
+   
 
-<main style="max-width: 600px; margin: 40px auto; padding: 0 20px;">
+}
+@if (TempData["Error"] != null)
+{
+    <div style="
+                    background:#ffdddd;
+                    color:#a33;
+                    padding:10px 15px;
+                    border-radius:6px;
+                    margin-bottom:20px;
+                    border:1px solid #e5b3b3;
+                ">
+        @TempData["Error"]
+    </div>
+}
+<main style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
 
     <h2 style="margin-bottom: 25px;">Създаване на категория</h2>
 
@@ -36,9 +50,109 @@
 
     </form>
 
+    <!-- Списък с вече създадени категории -->
+    <section style="margin-top: 40px;">
+        <h3 style="margin-bottom: 20px;">Създадени категории</h3>
+
+        @if (Model.Categories == null || !Model.Categories.Any())
+        {
+            <p style="color:#555;">Все още няма създадени категории.</p>
+        }
+        else
+        {
+            <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    ">
+                @foreach (var cat in Model.Categories)
+                {
+                    <div style="
+                    background:white;
+                    padding:25px 20px;
+                    border-radius:12px;
+                    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+                    text-align:center;
+                    display:flex;
+                    flex-direction:column;
+                    justify-content:space-between;
+                ">
+                        <h4 style="
+                        margin-bottom:15px;
+                        font-size:18px;
+                        font-weight:600;
+                        color:#333;
+                    ">
+                            @cat.Name
+                        </h4>
+
+                        <form asp-controller="Category" asp-action="Delete" asp-route-id="@cat.Id" method="post"
+                              onsubmit="return confirm('Сигурни ли сте, че искате да изтриете тази категория?');">
+                            <button type="submit"
+                                    style="
+                                    background:#bfbfbf;
+                                    color:white;
+                                    border:none;
+                                    padding:8px 18px;
+                                    border-radius:6px;
+                                    cursor:pointer;
+                                    font-weight:500;
+                                    transition:0.2s;
+                                "
+                                    onmouseover="this.style.background='#a5a5a5'"
+                                    onmouseout="this.style.background='#bfbfbf'">
+                                Изтрий
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+
+
+        }
+    </section>
+
+
 </main>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
+            const form = document.querySelector("form");
+            const nameInput = document.querySelector("input[name='Name']");
+
+            form.addEventListener("submit", function () {
+                setTimeout(() => {
+                    nameInput.value = "";
+                }, 50);
+            });
+
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const form = document.querySelector("form");
+            const nameInput = document.querySelector("input[name='Name']");
+            const existingCategories = @Html.Raw(Json.Serialize(Model.Categories.Select(c => c.Name.ToLower())));
+
+            form.addEventListener("submit", function (e) {
+
+                const name = nameInput.value.trim().toLowerCase();
+
+                if (existingCategories.includes(name)) {
+                    e.preventDefault();
+                    alert("Категория с това име вече съществува.");
+                    return;
+                }
+
+                setTimeout(() => {
+                    nameInput.value = "";
+                }, 50);
+            });
+
+        });
+    </script>
+
+}

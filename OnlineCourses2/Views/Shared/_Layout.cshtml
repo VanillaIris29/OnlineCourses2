@@ -9,45 +9,28 @@
     <link rel="stylesheet" href="~/OnlineCourses2.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OnlineCourses2</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Course" asp-action="Manage">Моите курсове</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Course" asp-action="Create">Създаване на курс</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Create">Създаване на категория</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Course" asp-action="All">Всички курсове</a>
-                        </li>
-                    </ul>
+    <div class="header-main-container">
+        <header class="container">
+            <nav class="custom-navbar">
+                <a class="brand-logo" asp-controller="Home" asp-action="Index">OnlineCourses</a>
+
+                <div class="nav-links d-none d-md-flex">
+                    <a asp-controller="Home" asp-action="Index">Начало</a>
+                    <a asp-controller="Course" asp-action="All">Курсове</a>
+                    <a asp-controller="Course" asp-action="Manage">Моите курсове</a>
+                    <a asp-controller="Category" asp-action="Create">Категории</a>
+                </div>
+
+                <div class="auth-box">
                     <partial name="_LoginPartial" />
                 </div>
-            </div>
-        </nav>
-    </header>
-    
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            </nav>
+        </header>
+        <div class="header-diagonal"></div>
+    </div>
+
+    <div class="container content-wrapper">
+        @RenderBody()
     </div>
 
     <footer class="border-top footer text-muted">
