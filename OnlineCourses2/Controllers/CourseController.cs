@@ -189,18 +189,21 @@ public class CourseController : Controller
 
         return RedirectToAction("Manage");
     }
-    /* [HttpGet]
-     public async Task<IActionResult> Details(string id)
-     {
-         var course = await _context.Courses
-             .Include(c => c.Category)
-             .FirstOrDefaultAsync(c => c.Id == id);
+    public async Task<IActionResult> Details(string id)
+    {
+        if (id == null)
+            return NotFound();
 
-         if (course == null)
-             return NotFound();
+        var course = await _context.Courses
+            .Include(c => c.Category)
+            .FirstOrDefaultAsync(c => c.Id == id);
 
-         return View(course);
-     }*/
+        if (course == null)
+            return NotFound();
+
+        return View(course);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Manage()
     {

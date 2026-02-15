@@ -20,15 +20,17 @@
                 gap: 25px;
             ">
             @foreach (var course in Model)
-            {
+            {<a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id"
+       style="text-decoration:none; color:inherit;">
+
                 <div style="
-                            background: white;
-                            border-radius: 10px;
-                            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-                            overflow: hidden;
-                            transition: transform .2s;
-                            cursor: pointer;
-                        "
+                     background: white;
+                     border-radius: 10px;
+                     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+                     overflow: hidden;
+                     transition: transform .2s;
+                     cursor: pointer;
+                       "
                      onmouseover="this.style.transform='scale(1.02)'"
                      onmouseout="this.style.transform='scale(1)'">
 
@@ -75,8 +77,11 @@
                     </div>
 
                 </div>
+                </a>
             }
         </div>
+        
+
     }
 
 </main>
