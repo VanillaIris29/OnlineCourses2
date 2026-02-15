@@ -32,12 +32,20 @@ public class CourseController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(CreateCourseViewModel model)
     {
+        
+        if (model.DurationHours < 8 || model.DurationHours > 30)
+            ModelState.AddModelError("DurationHours", "Продължителността трябва да е между 8 и 30 часа.");
+
+        if (model.Price <= 0)
+            ModelState.AddModelError("Price", "Цената трябва да е по-голяма от 0.");
+
+        if (model.MaxParticipants < 10 || model.MaxParticipants > 20)
+            ModelState.AddModelError("MaxParticipants", "Броят участници трябва да е между 10 и 20.");
         if (!ModelState.IsValid)
         {
             model.Categories = await _context.Categories.ToListAsync();
             return View(model);
         }
-
         var organizer = await _userManager.GetUserAsync(User);
 
         string? imagePath = null;
@@ -78,7 +86,7 @@ public class CourseController : Controller
 
         _context.Courses.Add(course);
         await _context.SaveChangesAsync();
-
+        TempData["Success"] = "Курсът беше създаден успешно!";
         return RedirectToAction("MyCourses");
     }
     [AllowAnonymous]
