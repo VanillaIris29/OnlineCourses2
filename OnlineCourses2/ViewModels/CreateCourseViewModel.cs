@@ -10,8 +10,9 @@ namespace OnlineCourses2.ViewModels
             public int DurationHours { get; set; }
             public decimal Price { get; set; }
             public int MaxParticipants { get; set; }
+        public bool HasCertificate { get; set; }
 
-            public string CategoryId { get; set; } = "";
+        public string CategoryId { get; set; } = "";
         public List<Category> Categories { get; set; } = new();
         public IFormFile? ImageFile { get; set; }
 

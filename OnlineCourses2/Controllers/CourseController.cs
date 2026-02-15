@@ -81,7 +81,9 @@ public class CourseController : Controller
             CategoryId = model.CategoryId,
             OrganizerId = organizer.Id,
             CurrentParticipants = 0,
-            ImagePath = imagePath
+            ImagePath = imagePath,
+             HasCertificate = model.HasCertificate
+
         };
 
         _context.Courses.Add(course);
@@ -133,6 +135,7 @@ public class CourseController : Controller
             MaxParticipants = course.MaxParticipants,
             CategoryId = course.CategoryId,
             ExistingImagePath = course.ImagePath,
+            HasCertificate = course.HasCertificate,
             Categories = await _context.Categories.ToListAsync()
         };
 
@@ -160,6 +163,8 @@ public class CourseController : Controller
         course.Price = model.Price;
         course.MaxParticipants = model.MaxParticipants;
         course.CategoryId = model.CategoryId;
+        course.HasCertificate = model.HasCertificate;
+
 
         // Handle new image upload
         if (model.ImageFile != null)

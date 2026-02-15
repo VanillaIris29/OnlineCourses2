@@ -28,6 +28,7 @@ namespace OnlineCourses2.Models
         public int CurrentParticipants { get; set; }
 
         public string? ImagePath { get; set; }
+        public bool HasCertificate { get; set; }
 
         // Category
         [Required]

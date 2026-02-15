@@ -48,6 +48,15 @@
             <input asp-for="MaxParticipants" type="number"
                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;" />
         </div>
+        <!-- Certificate -->
+        <div style="margin-bottom: 20px;">
+            <label>Сертификат</label>
+            <select asp-for="HasCertificate"
+                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
+                <option value="true">Със сертификат</option>
+                <option value="false">Без сертификат</option>
+            </select>
+        </div>
 
         <!-- Category -->
         <div style="margin-bottom: 20px;">
