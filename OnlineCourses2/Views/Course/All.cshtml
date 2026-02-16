@@ -73,6 +73,14 @@
                                 @(course.HasCertificate ? "Сертификат: Да" : "Сертификат: Не")
                             </span>
                         </p>
+                            <p style="font-size:14px; color:#888;">
+                                Начало: @course.StartDate.ToString("dd.MM.yyyy")
+                            </p>
+
+                            <p style="font-size:14px; color:#888;">
+                                Край: @course.EndDate.ToString("dd.MM.yyyy")
+                            </p>
+
 
                     </div>
 

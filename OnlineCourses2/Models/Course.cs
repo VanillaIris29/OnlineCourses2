@@ -16,7 +16,7 @@ namespace OnlineCourses2.Models
 
         public string? Description { get; set; }
 
-        [Range(1, 1000)]
+        [Range(1, 100)]
         public int DurationHours { get; set; }
 
         [Range(0, 9999)]
@@ -29,6 +29,8 @@ namespace OnlineCourses2.Models
 
         public string? ImagePath { get; set; }
         public bool HasCertificate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         // Category
         [Required]

@@ -23,8 +23,12 @@ public class CourseController : Controller
     {
         var vm = new CreateCourseViewModel
         {
-            Categories = await _context.Categories.ToListAsync()
+            Categories = await _context.Categories.ToListAsync(),
+            StartDate = DateTime.Today,
+            EndDate = DateTime.Today.AddDays(30)
+
         };
+       
 
         return View(vm);
     }
@@ -41,9 +45,19 @@ public class CourseController : Controller
 
         if (model.MaxParticipants < 10 || model.MaxParticipants > 20)
             ModelState.AddModelError("MaxParticipants", "Броят участници трябва да е между 10 и 20.");
+        if (model.EndDate < model.StartDate)
+        {
+            ModelState.AddModelError("EndDate", "Крайната дата трябва да е след началната.");
+        }
+
         if (!ModelState.IsValid)
         {
             model.Categories = await _context.Categories.ToListAsync();
+            if (model.StartDate == DateTime.MinValue)
+                model.StartDate = DateTime.Today;
+
+            if (model.EndDate == DateTime.MinValue)
+                model.EndDate = DateTime.Today.AddDays(30);
             return View(model);
         }
         var organizer = await _userManager.GetUserAsync(User);
@@ -82,14 +96,17 @@ public class CourseController : Controller
             OrganizerId = organizer.Id,
             CurrentParticipants = 0,
             ImagePath = imagePath,
-             HasCertificate = model.HasCertificate
+             HasCertificate = model.HasCertificate,
+            StartDate = model.StartDate,
+            EndDate = model.EndDate
+
 
         };
 
         _context.Courses.Add(course);
         await _context.SaveChangesAsync();
         TempData["Success"] = "Курсът беше създаден успешно!";
-        return RedirectToAction("MyCourses");
+        return RedirectToAction("Manage");
     }
     [AllowAnonymous]
     public async Task<IActionResult> All()
@@ -136,6 +153,8 @@ public class CourseController : Controller
             CategoryId = course.CategoryId,
             ExistingImagePath = course.ImagePath,
             HasCertificate = course.HasCertificate,
+            StartDate = course.StartDate,
+            EndDate = course.EndDate,
             Categories = await _context.Categories.ToListAsync()
         };
 
@@ -144,9 +163,20 @@ public class CourseController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(EditCourseViewModel model)
     {
+        if (model.EndDate < model.StartDate)
+        {
+            ModelState.AddModelError("EndDate", "Крайната дата трябва да е след началната.");
+        }
+
         if (!ModelState.IsValid)
         {
             model.Categories = await _context.Categories.ToListAsync();
+            if (model.StartDate == DateTime.MinValue)
+                model.StartDate = DateTime.Today;
+
+            if (model.EndDate == DateTime.MinValue)
+                model.EndDate = DateTime.Today.AddDays(30);
+
             return View(model);
         }
 
@@ -164,6 +194,8 @@ public class CourseController : Controller
         course.MaxParticipants = model.MaxParticipants;
         course.CategoryId = model.CategoryId;
         course.HasCertificate = model.HasCertificate;
+        course.StartDate = model.StartDate;
+        course.EndDate = model.EndDate;
 
 
         // Handle new image upload
@@ -228,7 +260,7 @@ public class CourseController : Controller
         _context.Courses.Remove(course);
         await _context.SaveChangesAsync();
 
-        return RedirectToAction("MyCourses");
+        return RedirectToAction("Manage");
     }
 
 }

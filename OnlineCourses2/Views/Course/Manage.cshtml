@@ -15,6 +15,15 @@
     </div>
 
     <h3 style="margin-bottom: 20px;">Моите курсове</h3>
+    @if (TempData["Success"] != null)
+    {
+        <div id="successMessage"
+             style="background:#81d8b0; color:white; padding:10px 15px;
+                    border-radius:6px; margin-bottom:20px; font-weight:500;">
+            @TempData["Success"]
+        </div>
+    }
+
 
     @if (Model.Count == 0)
     {
@@ -82,3 +91,12 @@
 
 </main>
 
+@section Scripts{
+    <script>
+        setTimeout(() => {
+            const alert = document.getElementById("successMessage");
+            if (alert) alert.style.display = "none";
+        }, 3000);
+    </script>
+
+}

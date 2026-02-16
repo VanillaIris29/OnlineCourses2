@@ -1,6 +1,7 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OnlineCourses2.Models;
+using System.Diagnostics;
 
 namespace OnlineCourses2.Controllers
 {
@@ -12,6 +13,7 @@ namespace OnlineCourses2.Controllers
         {
             _logger = logger;
         }
+       
 
         public IActionResult Index()
         {
