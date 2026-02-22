@@ -167,6 +167,30 @@ namespace OnlineCourses2.Controllers
 
             return RedirectToAction("UserDetails", new { id = user.Id });
         }
+        public async Task<IActionResult> OrganizerDetails(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+                return NotFound();
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var model = new AdminUserDetailsViewModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                MiddleName = user.MiddleName,
+                LastName = user.LastName,
+                City = user.City,
+                Country = user.Country,
+                Age = user.Age,
+                Email = user.Email,
+                Role = roles.FirstOrDefault()
+            };
+
+            return View(model);
+        }
 
 
     }

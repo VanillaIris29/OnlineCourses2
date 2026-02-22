@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnlineCourses2.Data;
+using OnlineCourses2.Data.Seeders;
 using OnlineCourses2.Models;
 
 
@@ -26,11 +27,17 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     await RoleSeeder.SeedRolesAsync(roleManager);
     await RoleSeeder.SeedAdminAsync(userManager, roleManager);
     await RoleSeeder.SeedOrganizerAsync(userManager, roleManager);
+    await RoleSeeder.SeedUsersAsync(userManager);
+
+    CategorySeeder.SeedCategories(context);
+    CourseSeeder.SeedCourses(context);
+
 }
 
 
