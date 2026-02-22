@@ -19,6 +19,16 @@ namespace OnlineCourses2.Controllers
             _context = context;
             _userManager = userManager;
         }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ManageAll()
+        {
+            var courses = await _context.Courses
+                .Include(c => c.Category)
+                .Include(c => c.Organizer)
+                .ToListAsync();
+
+            return View(courses); // <-- това връща ManageAll.cshtml
+        }
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -108,6 +118,10 @@ namespace OnlineCourses2.Controllers
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
             TempData["Success"] = "Курсът беше създаден успешно!";
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("ManageAll");
+            }
             return RedirectToAction("Manage");
         }
         [AllowAnonymous]
@@ -220,6 +234,10 @@ namespace OnlineCourses2.Controllers
             }
 
             await _context.SaveChangesAsync();
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("ManageAll");
+            }
 
             return RedirectToAction("Manage");
         }
@@ -261,6 +279,10 @@ namespace OnlineCourses2.Controllers
 
             _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("ManageAll");
+            }
 
             return RedirectToAction("Manage");
         }
