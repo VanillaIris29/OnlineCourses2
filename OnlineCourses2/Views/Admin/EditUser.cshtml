@@ -1,0 +1,92 @@
+﻿@model OnlineCourses2.ViewModels.AdminUserEditViewModel
+
+<div style="
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:80vh;
+">
+    <div style="
+        background:white;
+        padding:25px;
+        border-radius:10px;
+        box-shadow:0 2px 10px rgba(0,0,0,0.08);
+        max-width:600px;
+        width:100%;
+    ">
+        <h2 style="margin-bottom:20px;">Редакция на потребител</h2>
+
+        <form asp-action="EditUser" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="FirstName" class="form-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MiddleName" class="form-label"></label>
+                <input asp-for="MiddleName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="LastName" class="form-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Country" class="form-label"></label>
+                <input asp-for="Country" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Age" class="form-label"></label>
+                <input asp-for="Age" class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="SelectedRole" class="form-label">Роля</label>
+                <select asp-for="SelectedRole"
+                        asp-items="@(new SelectList(Model.AvailableRoles))"
+                        class="form-select">
+                </select>
+            </div>
+
+            <button type="submit"
+                    style="background-color:#81d8b0;
+                           color:white;
+                           border:none;
+                           padding:6px 14px;
+                           border-radius:6px;
+                           cursor:pointer;">
+                Запази
+            </button>
+
+            <a asp-action="Users"
+               style="background-color:#6c757d;
+                      color:white;
+                      border:none;
+                      padding:6px 14px;
+                      border-radius:6px;
+                      cursor:pointer;
+                      text-decoration:none;
+                      margin-left:10px;">
+                Назад
+            </a>
+        </form>
+    </div>
+</div>

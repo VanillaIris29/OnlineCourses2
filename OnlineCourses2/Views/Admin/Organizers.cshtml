@@ -1,0 +1,108 @@
+﻿@model IEnumerable<OnlineCourses2.Models.ApplicationUser>
+<style>
+    .hidden-filter {
+        display: none !important;
+    }
+</style>
+<div style="
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    margin-top:30px;
+">
+    <h2 style="margin-bottom:20px;">Организатори</h2>
+
+    <form method="get" class="d-flex align-items-center mb-3" style="gap:10px;">
+
+        <!-- Search bar -->
+        <input type="text"
+               name="search"
+               value="@ViewBag.Search"
+               class="form-control"
+               placeholder="Търси по email"
+               style="max-width: 250px; border-radius: 20px; padding: 6px 12px;" />
+
+        <!-- Filter icon -->
+        <button type="button"
+                id="filterToggle"
+                class="btn"
+                style="border-radius: 50%; width: 40px; height: 40px; padding: 0;
+                       border:2px solid #81d8b0; color:#81d8b0; background:white;">
+            <i class="bi bi-funnel"></i>
+        </button>
+
+        <!-- Hidden filter controls -->
+        <div id="filterControls"
+             class="d-flex align-items-center hidden-filter"
+             style="gap:10px;">
+
+            <select name="filter"
+                    class="form-select"
+                    style="max-width: 200px; border-radius: 10px; padding: 6px 12px;">
+                <option value="">Без филтър</option>
+                <option value="name_asc">Име (A–Z)</option>
+                <option value="name_desc">Име (Z–A)</option>
+                <option value="email_asc">Email (A–Z)</option>
+                <option value="email_desc">Email (Z–A)</option>
+                <option value="city">Град</option>
+            </select>
+
+            <button type="submit"
+                    style="background-color:#81d8b0; color:white; border:none;
+                           padding:6px 14px; border-radius:6px; cursor:pointer; white-space:nowrap;">
+                Приложи
+            </button>
+
+        </div>
+
+    </form>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Име</th>
+                <th>Email</th>
+                <th>Град</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var organizer in Model)
+            {
+                <tr>
+                    <td>@organizer.FirstName @organizer.LastName</td>
+                    <td>@organizer.Email</td>
+                    <td>@organizer.City</td>
+                    <td>
+                        <a asp-controller="Organizers"
+                           asp-action="Details"
+                           asp-route-id="@organizer.Id"
+                           style="background-color:#81d8b0;
+                                  color:white;
+                                  border:none;
+                                  padding:6px 14px;
+                                  border-radius:6px;
+                                  cursor:pointer;
+                                  white-space:nowrap;
+                                  text-decoration:none;
+                                  display:inline-block;">
+                            Детайли
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+<script>
+    const toggle = document.getElementById("filterToggle");
+    const controls = document.getElementById("filterControls");
+
+    toggle.addEventListener("click", () => {
+        controls.classList.toggle("hidden-filter");
+    });
+</script>

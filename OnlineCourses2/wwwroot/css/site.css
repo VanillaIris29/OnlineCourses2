@@ -1,25 +1,3 @@
-/*html {
-    font-size: 14px;
-}
-
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-
-body {
-    margin-bottom: 60px;
-}*/
 /* --- ОСНОВНИ НАСТРОЙКИ --- */
 html {
     font-size: 14px;
@@ -51,7 +29,7 @@ body {
 
 /* --- БЯЛАТА РАМКА (НАВИГАЦИЯ) --- */
 .custom-navbar {
-    border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+    border: 2.4px solid rgba(255, 255, 255, 0.9) !important;
     border-radius: 50px !important;
     padding: 10px 35px;
     display: flex !important;
@@ -146,3 +124,44 @@ body {
     background-color: white;
     border-top: 1px solid #dee2e6;
 }
+
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+    /* Всеки елемент в менюто */
+    .nav-links .nav-item {
+        position: relative;
+    }
+
+    /* Dropdown меню */
+    .nav-links .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        min-width: 160px;
+        padding: 0;
+        background-color: #c9ffe5 !important;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        overflow: hidden;
+        z-index: 9999;
+    }
+
+    /* Елементите вътре */
+    .nav-links .dropdown-item {
+        padding: 10px 15px;
+        text-align: center;
+        color: #444c38 !important;
+        background: transparent !important;
+    }
+
+        /* Hover */
+        .nav-links .dropdown-item:hover {
+            background-color: #cccccc !important;
+            color: white !important;
+        }
