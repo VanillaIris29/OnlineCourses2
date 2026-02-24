@@ -27,7 +27,7 @@ namespace OnlineCourses2.Data.Seeders
             // -------------------------------------------------------
             // 1) Първи курс – Психология (обновява стария, ако го има)
             // -------------------------------------------------------
-            var course1 = context.Courses.FirstOrDefault(c => c.Title == "Разговорен испански за начинаещи");
+            var course1 = context.Courses.FirstOrDefault(c => c.Title == "Въведение в психологията");
             if (course1 == null)
             {
                 course1 = new Course();
@@ -50,7 +50,7 @@ namespace OnlineCourses2.Data.Seeders
             // -------------------------------------------------------
             // 2) Втори курс – Маркетинг (обновява стария, ако го има)
             // -------------------------------------------------------
-            var course2 = context.Courses.FirstOrDefault(c => c.Title == "Италианска кухня за начинаещи");
+            var course2 = context.Courses.FirstOrDefault(c => c.Title == "Дигитален маркетинг за начинаещи");
             if (course2 == null)
             {
                 course2 = new Course();
