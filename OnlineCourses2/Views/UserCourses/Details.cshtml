@@ -36,13 +36,13 @@
         }
         else if ((bool)ViewBag.IsEnrolled)
         {
-            <p style="color:green; font-weight:bold;">Вече сте записан в този курс.</p>
+            <p style="color:gray; font-weight:bold;">Вече сте записан в този курс.</p>
         }
         else
         {
             <form method="post" asp-action="Enroll" asp-route-id="@Model.Id">
                 <button type="submit"
-                        style="background:#27ae60; padding:10px 20px; border:none; border-radius:6px; color:white;">
+                        style="background:#a8e6cf; padding:10px 20px; border:none; border-radius:6px; color:white;">
                     Запиши се
                 </button>
             </form>

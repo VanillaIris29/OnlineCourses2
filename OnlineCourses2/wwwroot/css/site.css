@@ -155,8 +155,8 @@ body {
     /* Елементите вътре */
     .nav-links .dropdown-item {
         padding: 10px 15px;
-        text-align: center;
-        color: #444c38 !important;
+        text-align: left;
+        color: #A9A9A9 !important;
         background: transparent !important;
     }
 

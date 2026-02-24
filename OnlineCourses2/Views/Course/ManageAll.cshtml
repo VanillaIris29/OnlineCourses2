@@ -61,6 +61,16 @@
                         <h4>@course.Title</h4>
                         <p>Категория: @course.Category?.Name</p>
                         <p>Организатор: @course.Organizer?.Email</p>
+                        <p style="font-size:14px; margin-top:5px;">
+                            <span style="
+                                        padding:4px 8px;
+                                        border-radius:6px;
+                                                background:@(course.HasCertificate ? "#81d8b0" : "#bdc3c7");
+                                        color:white;
+                                        font-size:12px;">
+                                @(course.HasCertificate ? "Сертификат: Да" : "Сертификат: Не")
+                            </span>
+                        </p>
                         <p>Цена: @course.Price лв.</p>
 
                         <div style="display:flex; gap:10px; margin-top:15px;">
