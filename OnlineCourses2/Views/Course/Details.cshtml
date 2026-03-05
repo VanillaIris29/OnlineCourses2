@@ -29,8 +29,9 @@
 
         <p><strong>Цена:</strong> @Model.Price лв.</p>
 
-        <p><strong>Максимален брой участници:</strong> @Model.MaxParticipants</p>
-
+        <!--<p><strong>Максимален брой участници:</strong> @Model.MaxParticipants</p>-->
+        <p><strong>Записани:</strong> @Model.CurrentParticipants / @Model.MaxParticipants</p>
+        <p><strong>Свободни места:</strong> @(Model.MaxParticipants - Model.CurrentParticipants)</p>
         <h3 style="margin-top: 25px;">Кратко описание</h3>
         <p>@Model.ShortDescription</p>
 

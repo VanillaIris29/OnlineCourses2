@@ -73,19 +73,30 @@
                         </p>
                         <p>Цена: @course.Price лв.</p>
 
-                        <div style="display:flex; gap:10px; margin-top:15px;">
+                        <div style="display:flex; justify-content:center; gap:12px; margin-top:15px;">
+
+                            <a asp-controller="Course"
+                               asp-action="Participants"
+                               asp-route-id="@course.Id"
+                               style="background:#4fa87d; color:white; border:none;
+                      padding:6px 14px; border-radius:6px; font-weight:500;
+                      font-size:14px; text-decoration:none; display:inline-block;">
+                                Участници
+                            </a>
 
                             <a asp-controller="Course" asp-action="Edit" asp-route-id="@course.Id"
-                               style="background:#bfbfbf; color:white; padding:10px 20px;
-                                                      border-radius:6px; text-decoration:none; font-weight:500;">
+                               style="background:#81d8b0; color:white; border:none;
+                  padding:6px 12px; border-radius:6px; font-weight:500;
+                  font-size:14px; text-decoration:none; display:inline-block;">
                                 Редактирай
                             </a>
 
                             <form asp-controller="Course" asp-action="Delete" asp-route-id="@course.Id" method="post"
                                   onsubmit="return confirm('Сигурни ли сте, че искате да изтриете този курс?');">
                                 <button type="submit"
-                                        style="background:#81d8b0; color:white; border:none;
-                                                               padding:10px 20px; border-radius:6px; font-weight:500;">
+                                        style="background:#bfbfbf; color:white; border:none;
+                               padding:6px 14px; border-radius:6px; font-weight:500;
+                               font-size:14px;">
                                     Изтрий
                                 </button>
                             </form>

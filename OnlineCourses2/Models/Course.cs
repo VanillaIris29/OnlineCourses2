@@ -42,7 +42,7 @@ namespace OnlineCourses2.Models
         public string OrganizerId { get; set; } = null!;
         public ApplicationUser? Organizer { get; set; }
 
-        public ICollection<UserCourse>? UserCourses { get; set; }
+        public ICollection<Enrollment>? Enrollments { get; set; }
 
     }
 }

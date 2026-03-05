@@ -57,24 +57,80 @@ namespace OnlineCourses2.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
+            // 1) Намираме курса
+            var course = await _context.Courses
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (course == null)
+            {
+                TempData["Error"] = "Курсът не беше намерен.";
+                return RedirectToAction("All");
+            }
+
+            // 2) Проверка дали курсът е пълен
+            if (course.CurrentParticipants >= course.MaxParticipants)
+            {
+                TempData["Error"] = "Курсът е пълен.";
+                return RedirectToAction("Details", new { id });
+            }
+
+            // 3) Проверка дали потребителят вече е записан
             bool already = await _context.Enrollments
                 .AnyAsync(e => e.CourseId == id && e.UserId == userId);
 
-            if (!already)
+            if (already)
             {
-                var enroll = new Enrollment
-                {
-                    CourseId = id,
-                    UserId = userId
-                };
-
-                _context.Enrollments.Add(enroll);
-                await _context.SaveChangesAsync();
+                TempData["Error"] = "Вече сте записани за този курс.";
+                return RedirectToAction("Details", new { id });
             }
+
+            // 4) Записване
+            var enroll = new Enrollment
+            {
+                CourseId = id,
+                UserId = userId
+            };
+
+            _context.Enrollments.Add(enroll);
+
+            // 5) Увеличаваме броя на записаните
+            course.CurrentParticipants++;
+            _context.Courses.Update(course);
+
+            await _context.SaveChangesAsync();
 
             TempData["Success"] = "Успешно се записахте за курса!";
             return RedirectToAction("Details", new { id });
         }
+        
+        [HttpPost]
+        [Authorize(Roles = "Organizer,Admin")]
+        public async Task<IActionResult> Remove(string courseId, string userId)
+        {
+            var enrollment = await _context.Enrollments
+                .FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
+
+            if (enrollment == null)
+                return NotFound();
+
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
+
+            if (course == null)
+                return NotFound();
+
+            if (course.CurrentParticipants > 0)
+                course.CurrentParticipants--;
+
+            _context.Enrollments.Remove(enrollment);
+            _context.Courses.Update(course);
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Потребителят беше премахнат от курса.";
+
+            return RedirectToAction("Participants", "Course", new { id = courseId });
+        }
+
         public async Task<IActionResult> MyCourses()
         {
             var userId = _userManager.GetUserId(User);

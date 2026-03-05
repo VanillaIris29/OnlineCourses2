@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace OnlineCourses2.Controllers
 {
-    [Authorize(Roles = "Organizer,Admin")]
+    //[Authorize(Roles = "Organizer,Admin")]
     public class CourseController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -286,7 +286,22 @@ namespace OnlineCourses2.Controllers
 
             return RedirectToAction("Manage");
         }
+        [Authorize(Roles = "Organizer,Admin")]
+        public async Task<IActionResult> Participants(string id)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Enrollments)
+                .ThenInclude(e => e.User)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
+            if (course == null)
+                return NotFound();
+
+            if (User.IsInRole("Organizer") && course.OrganizerId != _userManager.GetUserId(User))
+                return Forbid();
+
+            return View(course);
+        }
     }
 
 }

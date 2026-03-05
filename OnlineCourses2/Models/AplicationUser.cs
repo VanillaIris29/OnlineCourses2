@@ -26,7 +26,6 @@ namespace OnlineCourses2.Models
 
         public string? ProfileImagePath { get; set; }
 
-        public ICollection<UserCourse>? UserCourses { get; set; }
         public ICollection<Course>? CreatedCourses { get; set; }
 
     }

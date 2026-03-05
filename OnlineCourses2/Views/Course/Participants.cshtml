@@ -1,0 +1,65 @@
+﻿@model Course
+
+@{
+    ViewData["Title"] = "Записани участници";
+}
+
+<h2 class="mb-4">Записани участници за @Model.Title</h2>
+
+@if (Model.Enrollments == null || !Model.Enrollments.Any())
+{
+    <p>Няма записани участници.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var e in Model.Enrollments)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            @($"{e.User.FirstName} {e.User.MiddleName} {e.User.LastName}")
+                        </h5>
+
+                        <p class="card-text">
+                            <strong>Имейл:</strong> @e.User.Email
+                        </p>
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("Organizer"))
+                        {
+                            <div style="display:flex; gap:10px; margin-top:15px;">
+
+                                <!-- Бутон Детайли -->
+                                <a asp-controller="UserCourses"
+                                   asp-action="Details"
+                                   asp-route-id="@e.UserId"
+                                   style="background:#81d8b0; color:white; border:none;
+                          padding:8px 16px; border-radius:6px; font-weight:500;
+                          text-decoration:none; display:inline-block;">
+                                    Детайли
+                                </a>
+
+                                <!-- Бутон Премахни (сив) -->
+                                <form asp-controller="UserCourses" asp-action="Remove" method="post"
+                                      onsubmit="return confirm('Сигурни ли сте, че искате да премахнете този участник?');">
+                                    <input type="hidden" name="courseId" value="@Model.Id" />
+                                    <input type="hidden" name="userId" value="@e.UserId" />
+
+                                    <button type="submit"
+                                            style="background:#b3b3b3; color:white; border:none;
+                                   padding:8px 16px; border-radius:6px; font-weight:500;">
+                                        Премахни
+                                    </button>
+                                </form>
+
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
