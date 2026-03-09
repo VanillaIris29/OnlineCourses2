@@ -122,6 +122,26 @@ namespace OnlineCourses2.Controllers
         {
             var courses = await _context.Courses
                 .Include(c => c.Category)
+                .Where(c => c.EndDate >= DateTime.Today) // ← само активни курсове
+                .ToListAsync();
+
+            return View(courses);
+        }
+        [Authorize(Roles = "Admin,Organizer")]
+        public async Task<IActionResult> AllWithExpired()
+        {
+            var courses = await _context.Courses
+                .Include(c => c.Category)
+                .ToListAsync();
+
+            return View(courses);
+        }
+        [Authorize(Roles = "Admin,Organizer")]
+        public async Task<IActionResult> Expired()
+        {
+            var courses = await _context.Courses
+                .Include(c => c.Category)
+                .Where(c => c.EndDate < DateTime.Today)
                 .ToListAsync();
 
             return View(courses);

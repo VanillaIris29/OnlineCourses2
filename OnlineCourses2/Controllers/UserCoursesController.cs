@@ -66,13 +66,19 @@ namespace OnlineCourses2.Controllers
                 TempData["Error"] = "Курсът не беше намерен.";
                 return RedirectToAction("All");
             }
-
-            // 2) Проверка дали курсът е пълен
             if (course.CurrentParticipants >= course.MaxParticipants)
             {
-                TempData["Error"] = "Курсът е пълен.";
-                return RedirectToAction("Details", new { id });
+                TempData["Error"] = "Курсът е вече пълен.";
+                return RedirectToAction("Details", new { id = course.Id });
             }
+
+            /*if (course.EndDate < DateTime.Today)
+            {
+                TempData["Error"] = "Курсът е изтекъл.";
+                return RedirectToAction("Details", new { id = course.Id });
+            }*/
+
+           
 
             // 3) Проверка дали потребителят вече е записан
             bool already = await _context.Enrollments

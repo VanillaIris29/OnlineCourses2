@@ -37,6 +37,14 @@
         {
             <p style="color:gray; font-weight:bold;">Вече сте записан в този курс.</p>
         }
+        else if (Model.CurrentParticipants >= Model.MaxParticipants)
+        {
+            <button class="btn btn-secondary" disabled>Курсът е пълен</button>
+        }
+        else if (Model.EndDate < DateTime.Today)
+        {
+            <button class="btn btn-secondary" disabled>Курсът е изтекъл</button>
+        }
         else
         {
             <form method="post" asp-action="Enroll" asp-route-id="@Model.Id">
@@ -46,6 +54,7 @@
                 </button>
             </form>
         }
+
 
     </div>
 
