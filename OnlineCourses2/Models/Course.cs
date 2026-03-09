@@ -31,6 +31,7 @@ namespace OnlineCourses2.Models
         public bool HasCertificate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public int DurationDays { get; set; }
 
         // Category
         [Required]

@@ -14,7 +14,7 @@ namespace OnlineCourses2.ViewModels
         public int MaxParticipants { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-
+        public int DurationDays { get; set; }
         public bool HasCertificate { get; set; }
         public string CategoryId { get; set; } = "";
        

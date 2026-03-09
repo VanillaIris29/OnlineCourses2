@@ -35,9 +35,7 @@ namespace OnlineCourses2.Controllers
         {
             var vm = new CreateCourseViewModel
             {
-                Categories = await _context.Categories.ToListAsync(),
-                StartDate = DateTime.Today,
-                EndDate = DateTime.Today.AddDays(30)
+                Categories = await _context.Categories.ToListAsync()
 
             };
 
@@ -57,19 +55,13 @@ namespace OnlineCourses2.Controllers
 
             if (model.MaxParticipants < 10 || model.MaxParticipants > 20)
                 ModelState.AddModelError("MaxParticipants", "Броят участници трябва да е между 10 и 20.");
-            if (model.EndDate < model.StartDate)
-            {
-                ModelState.AddModelError("EndDate", "Крайната дата трябва да е след началната.");
-            }
+
+            if (model.DurationDays <= 0)
+                ModelState.AddModelError("DurationDays", "Продължителността трябва да е поне 1 ден.");
 
             if (!ModelState.IsValid)
             {
                 model.Categories = await _context.Categories.ToListAsync();
-                if (model.StartDate == DateTime.MinValue)
-                    model.StartDate = DateTime.Today;
-
-                if (model.EndDate == DateTime.MinValue)
-                    model.EndDate = DateTime.Today.AddDays(30);
                 return View(model);
             }
             var organizer = await _userManager.GetUserAsync(User);
@@ -109,8 +101,9 @@ namespace OnlineCourses2.Controllers
                 CurrentParticipants = 0,
                 ImagePath = imagePath,
                 HasCertificate = model.HasCertificate,
+                DurationDays = model.DurationDays,
                 StartDate = model.StartDate,
-                EndDate = model.EndDate
+                EndDate = model.StartDate.AddDays(model.DurationDays)
 
 
             };
@@ -164,6 +157,7 @@ namespace OnlineCourses2.Controllers
                 ShortDescription = course.ShortDescription,
                 Description = course.Description,
                 DurationHours = course.DurationHours,
+                DurationDays = course.DurationDays,   // ← важно
                 Price = course.Price,
                 MaxParticipants = course.MaxParticipants,
                 CategoryId = course.CategoryId,
@@ -179,20 +173,9 @@ namespace OnlineCourses2.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EditCourseViewModel model)
         {
-            if (model.EndDate < model.StartDate)
-            {
-                ModelState.AddModelError("EndDate", "Крайната дата трябва да е след началната.");
-            }
-
             if (!ModelState.IsValid)
             {
                 model.Categories = await _context.Categories.ToListAsync();
-                if (model.StartDate == DateTime.MinValue)
-                    model.StartDate = DateTime.Today;
-
-                if (model.EndDate == DateTime.MinValue)
-                    model.EndDate = DateTime.Today.AddDays(30);
-
                 return View(model);
             }
 
@@ -201,20 +184,22 @@ namespace OnlineCourses2.Controllers
             if (course == null)
                 return NotFound();
 
-            // Update fields
+            // Обновяване на данните
             course.Title = model.Title;
             course.ShortDescription = model.ShortDescription;
             course.Description = model.Description;
             course.DurationHours = model.DurationHours;
+            course.DurationDays = model.DurationDays;
             course.Price = model.Price;
             course.MaxParticipants = model.MaxParticipants;
             course.CategoryId = model.CategoryId;
             course.HasCertificate = model.HasCertificate;
             course.StartDate = model.StartDate;
-            course.EndDate = model.EndDate;
 
+            // Най-важното:
+            course.EndDate = model.StartDate.AddDays(model.DurationDays);
 
-            // Handle new image upload
+            // Нова снимка?
             if (model.ImageFile != null)
             {
                 string folder = Path.Combine("wwwroot", "images", "courses");
@@ -234,10 +219,11 @@ namespace OnlineCourses2.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Курсът беше редактиран успешно!";
+
             if (User.IsInRole("Admin"))
-            {
                 return RedirectToAction("ManageAll");
-            }
 
             return RedirectToAction("Manage");
         }
