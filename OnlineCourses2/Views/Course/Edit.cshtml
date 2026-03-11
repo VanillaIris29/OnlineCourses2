@@ -101,18 +101,21 @@
         </div>
 
         <!-- Category -->
-        <div style="margin-bottom: 20px;">
-            <label>Категория</label>
-            <select asp-for="CategoryId"
-                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
-                @foreach (var cat in Model.Categories)
-                {
-                    <option value="@cat.Id" selected="@(cat.Id == Model.CategoryId)">
-                        @cat.Name
-                    </option>
-                }
-            </select>
-        </div>
+            <div style="margin-bottom: 20px;">
+                <label>Категория</label>
+
+                <select asp-for="CategoryId"
+                        asp-items="@(new SelectList(Model.Categories, "Id", "Name", Model.CategoryId))"
+                        class="category-select"
+                        style="width:100%">
+                    <option value="">-- Изберете категория --</option>
+                </select>
+
+                <span asp-validation-for="CategoryId" style="color:red;"></span>
+            </div>
+
+
+
 
         <!-- Existing Image -->
         @if (!string.IsNullOrEmpty(Model.ExistingImagePath))
@@ -297,6 +300,17 @@
 
     });
 </script>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.category-select').select2({
+                width: '100%'
+            });
+        });
+    </script>
+}
+
+
 
 <style>
     .error {

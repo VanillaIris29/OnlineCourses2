@@ -192,7 +192,18 @@ namespace OnlineCourses2.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> ManageAllExpired()
+        {
+            var courses = await _context.Courses
+        .Where(c => c.EndDate < DateTime.Now)
+        .Include(c => c.Category)
+        .Include(c => c.Organizer)
+        .ToListAsync();
 
+            return View(courses);
+
+
+        }
     }
 }
 

@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OnlineCourses2.Data;
 using OnlineCourses2.Models;
 using OnlineCourses2.ViewModels;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace OnlineCourses2.Controllers
 {
@@ -269,6 +270,7 @@ namespace OnlineCourses2.Controllers
 
             var courses = await _context.Courses
                 .Where(c => c.OrganizerId == user.Id)
+                 .Where(c => c.EndDate >= DateTime.Today)
                 .Include(c => c.Category)
                 .ToListAsync();
 
@@ -308,6 +310,20 @@ namespace OnlineCourses2.Controllers
 
             return View(course);
         }
+
+        [Authorize(Roles = "Organizer")]
+        public async Task<IActionResult> ManageExpired()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var courses = await _context.Courses
+                .Where(c => c.OrganizerId == userId &&
+                            c.EndDate < DateTime.Now)
+                .ToListAsync();
+
+            return View(courses);
+        }
+
     }
 
 }

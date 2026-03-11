@@ -119,16 +119,17 @@
         <!-- Category -->
         <div style="margin-bottom: 20px;">
             <label>Категория</label>
-            <select asp-for="CategoryId" class="category-select" style="width:100%;">
+            <select asp-for="CategoryId"
+                    asp-items="@(new SelectList(Model.Categories, "Id", "Name", Model.CategoryId))"
+                    class="category-select"
+                    style="width:100%;">
                 <option value="">-- Изберете категория --</option>
-                @foreach (var cat in Model.Categories)
-                {
-                    <option value="@cat.Id">@cat.Name</option>
-                }
             </select>
 
             <span asp-validation-for="CategoryId" style="color:red;"></span>
         </div>
+
+
        
         <!-- Buttons -->
         <div style="display:flex; justify-content:space-between; align-items:center;">

@@ -12,8 +12,13 @@
                   border-radius: 6px; text-decoration: none; font-weight: 500;">
             Създай курс
         </a>
+        <a asp-controller="Course" asp-action="ManageExpired"
+           style="background-color: #bfbfbf; color: white; padding: 10px 20px;
+                  border-radius: 6px; text-decoration: none; font-weight: 500;">
+            Изтекли курсове
+        </a>
     </div>
-
+   
     <h3 style="margin-bottom: 20px;">Моите курсове</h3>
     @if (TempData["Success"] != null)
     {
