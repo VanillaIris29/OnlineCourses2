@@ -19,14 +19,14 @@
     <tbody>
         @foreach (var course in Model)
         {
-            <tr>
-                <td>@course.Title</td>
-                <td>@course.Category.Name</td>
-                <td>
-                    <a asp-controller="Courses"
-                       asp-action="Details"
-                       asp-route-id="@course.Id"
-                       style="background-color:#81d8b0;
+                <tr>
+                    <td>@course.Title</td>
+                    <td>@course.Category.Name</td>
+                    <td>
+                        <a asp-controller="Course"
+                           asp-action="Details"
+                           asp-route-id="@course.Id"
+                           style="background-color:#81d8b0;
                                   color:white;
                                   border:none;
                                   padding:6px 14px;
@@ -35,10 +35,11 @@
                                   white-space:nowrap;
                                   text-decoration:none;
                                   display:inline-block;">
-                        Детайли
-                    </a>
-                </td>
-            </tr>
+                            Детайли
+                        </a>
+                    </td>
+                </tr>
+
         }
     </tbody>
 </table>

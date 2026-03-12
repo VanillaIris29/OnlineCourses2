@@ -24,6 +24,7 @@ namespace OnlineCourses2.Controllers
         public async Task<IActionResult> ManageAll()
         {
             var courses = await _context.Courses
+                .Where(c => c.EndDate >= DateTime.Now)
                 .Include(c => c.Category)
                 .Include(c => c.Organizer)
                 .ToListAsync();
@@ -317,11 +318,12 @@ namespace OnlineCourses2.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var courses = await _context.Courses
-                .Where(c => c.OrganizerId == userId &&
-                            c.EndDate < DateTime.Now)
+                .Where(c => c.OrganizerId == userId && c.EndDate < DateTime.Now)
+                .Include(c => c.Category)   // ← ТОВА ЛИПСВА
                 .ToListAsync();
 
             return View(courses);
+
         }
 
     }
