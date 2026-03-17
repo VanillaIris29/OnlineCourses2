@@ -5,7 +5,7 @@
     justify-content:center;
     align-items:center;
     min-height:70vh;
-    ">
+">
     <div style="
         background:white;
         padding:25px;
@@ -13,7 +13,7 @@
         box-shadow:0 2px 10px rgba(0,0,0,0.08);
         max-width:600px;
         width:100%;
-        ">
+    ">
         <h2 style="margin-bottom:20px;">Моят профил</h2>
 
         <p><strong>Име:</strong> @Model.FirstName</p>
@@ -24,54 +24,39 @@
         <p><strong>Години:</strong> @Model.Age</p>
         <p><strong>Email:</strong> @Model.Email</p>
 
-        <p>
-            <strong>Роля:</strong>
+        <p><strong>Роля:</strong>
             @{
-                if (User.IsInRole("Admin"))
-                {
-                    <span>Администратор</span>
-                    ;
-                }
-                else if (User.IsInRole("Organizer"))
-                {
-
-                    <span>Организатор</span>
-                    ;
-                }
-                else
-                {
-
-                    <span>Потребител</span>
-                    ;
-                }
+                if (User.IsInRole("Admin")) { <span>Администратор</span>; }
+                else if (User.IsInRole("Organizer")) { <span>Организатор</span>; }
+                else { <span>Потребител</span>; }
             }
         </p>
 
         <div style="margin-top:20px;">
             <a asp-controller="Profile"
-                   asp-action="Edit"
-                   style="background-color:#81d8b0;
-                color:white;
-                border:none;
-                padding:6px 14px;
-                border-radius:6px;
-                cursor:pointer;
-                text-decoration:none;">
+               asp-action="Edit"
+               style="background-color:#81d8b0;
+                      color:white;
+                      border:none;
+                      padding:6px 14px;
+                      border-radius:6px;
+                      cursor:pointer;
+                      text-decoration:none;">
                 Редактирай
             </a>
 
             @if (User.IsInRole("Admin"))
             {
                 <a asp-controller="Admin"
-                       asp-action="Index"
-                       style="background-color:#6c757d;
-                    color:white;
-                    border:none;
-                    padding:6px 14px;
-                    border-radius:6px;
-                    cursor:pointer;
-                    text-decoration:none;
-                    margin-left:10px;">
+                   asp-action="Index"
+                   style="background-color:#6c757d;
+                          color:white;
+                          border:none;
+                          padding:6px 14px;
+                          border-radius:6px;
+                          cursor:pointer;
+                          text-decoration:none;
+                          margin-left:10px;">
                     Админ панел
                 </a>
             }

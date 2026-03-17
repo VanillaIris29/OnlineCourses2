@@ -1,0 +1,51 @@
+﻿@model ApplicationUser
+
+<div style="display:flex; justify-content:center; align-items:center; min-height:80vh;">
+    <div style="background:white; padding:25px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.08); max-width:600px; width:100%;">
+        <h2 style="margin-bottom:20px;">Редакция на профил</h2>
+
+        <form asp-action="EditAdmin" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="FirstName"></label>
+                <input asp-for="FirstName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MiddleName"></label>
+                <input asp-for="MiddleName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="LastName"></label>
+                <input asp-for="LastName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="City"></label>
+                <input asp-for="City" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Country"></label>
+                <input asp-for="Country" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Age"></label>
+                <input asp-for="Age" class="form-control" />
+            </div>
+
+            <button type="submit"
+                    style="background:#81d8b0; color:white; padding:6px 14px; border-radius:6px;">
+                Запази
+            </button>
+
+            <a asp-action="IndexAdmin"
+                   style="background:#6c757d; color:white; padding:6px 14px; border-radius:6px; margin-left:10px;">
+                Назад
+            </a>
+        </form>
+    </div>
+</div>

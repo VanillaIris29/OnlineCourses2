@@ -20,17 +20,10 @@
                 {
                     <div class="nav-links d-none d-md-flex">
 
-                        <div class="nav-item">
+                        
                             <a asp-controller="Course" asp-action="All">Курсове</a>
-                        </div>
-                        <div class="nav-item">
                             <a asp-controller="Course" asp-action="ManageAll">Всички курсове</a>
-                        </div>
-
-                        <div class="nav-item">
                             <a asp-controller="Category" asp-action="Create">Категории</a>
-                        </div>
-
                         <div class="nav-item dropdown">
                             <a class="dropdown-toggle" href="#" id="adminDropdown" role="button"
                                data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
@@ -42,6 +35,7 @@
                                 <li><a class="dropdown-item" asp-controller="Admin" asp-action="Users">Потребители</a></li>
                             </ul>
                         </div>
+                        <a asp-controller="Profile" asp-action="IndexAdmin">Моят профил</a>
 
                     </div>
                 }
@@ -50,6 +44,7 @@
                     <div class="nav-links d-none d-md-flex">
                         <a asp-controller="Course" asp-action="All">Курсове</a>
                         <a asp-controller="Course" asp-action="Manage">Моите курсове</a>
+                        <a asp-controller="Profile" asp-action="IndexOrganizer">Моят профил</a>
                     </div>
                    
 
@@ -59,7 +54,7 @@
                     <div class="nav-links d-none d-md-flex">
                         <a asp-controller="UserCourses" asp-action="All">Курсове</a>
                         <a asp-controller="UserCourses" asp-action="MyCourses">Моите курсове</a>
-                        <a asp-controller="Profile" asp-action="Index">Моят профил</a>
+                        <a asp-controller="Profile" asp-action="IndexUser">Моят профил</a>
                     </div>
                 }
              
@@ -78,7 +73,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - OnlineCourses<a asp-area=""></a>
+            &copy; 2026 - OnlineCourses-school project<a asp-area=""></a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
