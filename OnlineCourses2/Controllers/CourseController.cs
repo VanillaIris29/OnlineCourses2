@@ -21,15 +21,65 @@ namespace OnlineCourses2.Controllers
             _userManager = userManager;
         }
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ManageAll()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ManageAll(
+    string search,
+    string categoryId,
+    string sort,
+    string certificate)
         {
-            var courses = await _context.Courses
-                .Where(c => c.EndDate >= DateTime.Now)
+            var courses = _context.Courses
                 .Include(c => c.Category)
                 .Include(c => c.Organizer)
-                .ToListAsync();
+                .Where(c => c.EndDate >= DateTime.Now)
+                .AsQueryable();
 
-            return View(courses); // <-- това връща ManageAll.cshtml
+            // 🔍 Search
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                courses = courses.Where(c =>
+                    c.Title.Contains(search) ||
+                    c.Category.Name.Contains(search));
+            }
+
+            // 📂 Category
+            if (!string.IsNullOrWhiteSpace(categoryId))
+            {
+                courses = courses.Where(c => c.CategoryId == categoryId);
+            }
+
+            // 🎓 Certificate
+            if (certificate == "yes")
+                courses = courses.Where(c => c.HasCertificate);
+            else if (certificate == "no")
+                courses = courses.Where(c => !c.HasCertificate);
+
+            // 🔽 Sorting
+            courses = sort switch
+            {
+                "name_asc" => courses.OrderBy(c => c.Title),
+                "name_desc" => courses.OrderByDescending(c => c.Title),
+
+                "price_low" => courses.OrderBy(c => c.Price),
+                "price_high" => courses.OrderByDescending(c => c.Price),
+
+                "days_low" => courses.OrderBy(c => c.DurationDays),
+                "days_high" => courses.OrderByDescending(c => c.DurationDays),
+
+                "hours_low" => courses.OrderBy(c => c.DurationHours),
+                "hours_high" => courses.OrderByDescending(c => c.DurationHours),
+
+                _ => courses
+            };
+
+            // 📦 ViewBag (задължително!)
+            ViewBag.Search = search;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.Sort = sort;
+            ViewBag.Certificate = certificate;
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            return View(await courses.ToListAsync());
         }
 
         [HttpGet]
@@ -120,14 +170,65 @@ namespace OnlineCourses2.Controllers
             return RedirectToAction("Manage");
         }
         [AllowAnonymous]
-        public async Task<IActionResult> All()
+        public async Task<IActionResult> All(
+    string search,
+    string categoryId,
+    string sort,
+    string certificate)
         {
-            var courses = await _context.Courses
+            var courses = _context.Courses
                 .Include(c => c.Category)
-                .Where(c => c.EndDate >= DateTime.Today) // ← само активни курсове
-                .ToListAsync();
+                .Include(c => c.Enrollments)
+                .Where(c => c.EndDate >= DateTime.Today)
+                .AsQueryable();
 
-            return View(courses);
+            // 🔍 Search
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                courses = courses.Where(c =>
+                    c.Title.Contains(search) ||
+                    c.Category.Name.Contains(search));
+            }
+
+            // 📂 Category
+            if (!string.IsNullOrWhiteSpace(categoryId))
+            {
+                courses = courses.Where(c => c.CategoryId == categoryId);
+            }
+
+            // 🎓 Certificate
+            if (certificate == "yes")
+                courses = courses.Where(c => c.HasCertificate);
+
+            else if (certificate == "no")
+                courses = courses.Where(c => !c.HasCertificate);
+
+            // 🔽 Sorting
+            courses = sort switch
+            {
+                "name_asc" => courses.OrderBy(c => c.Title),
+                "name_desc" => courses.OrderByDescending(c => c.Title),
+
+                "price_low" => courses.OrderBy(c => c.Price),
+                "price_high" => courses.OrderByDescending(c => c.Price),
+
+                "days_low" => courses.OrderBy(c => c.DurationDays),
+                "days_high" => courses.OrderByDescending(c => c.DurationDays),
+
+                "hours_low" => courses.OrderBy(c => c.DurationHours),
+                "hours_high" => courses.OrderByDescending(c => c.DurationHours),
+
+                _ => courses
+            };
+
+            // 📦 ViewBag (ТОВА Е ВАЖНО)
+            ViewBag.Search = search;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.Sort = sort;
+            ViewBag.Certificate = certificate;
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            return View(await courses.ToListAsync());
         }
         [Authorize(Roles = "Admin,Organizer")]
         public async Task<IActionResult> AllWithExpired()
@@ -265,18 +366,69 @@ namespace OnlineCourses2.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Manage()
+        [Authorize(Roles = "Admin,Organizer")]
+        public async Task<IActionResult> Manage(
+      string search,
+      string categoryId,
+      string sort,
+      string certificate)
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var courses = await _context.Courses
+            var courses = _context.Courses
                 .Where(c => c.OrganizerId == user.Id)
-                 .Where(c => c.EndDate >= DateTime.Today)
+                .Where(c => c.EndDate >= DateTime.Today)
                 .Include(c => c.Category)
-                .ToListAsync();
+                .AsQueryable();
 
-            return View(courses);
+            // 🔍 Search
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                courses = courses.Where(c =>
+                    c.Title.Contains(search) ||
+                    c.Category.Name.Contains(search));
+            }
+
+            // 📂 Category
+            if (!string.IsNullOrWhiteSpace(categoryId))
+            {
+                courses = courses.Where(c => c.CategoryId == categoryId);
+            }
+
+            // 🎓 Certificate
+            if (certificate == "yes")
+                courses = courses.Where(c => c.HasCertificate);
+            else if (certificate == "no")
+                courses = courses.Where(c => !c.HasCertificate);
+
+            // 🔽 Sorting
+            courses = sort switch
+            {
+                "name_asc" => courses.OrderBy(c => c.Title),
+                "name_desc" => courses.OrderByDescending(c => c.Title),
+
+                "price_low" => courses.OrderBy(c => c.Price),
+                "price_high" => courses.OrderByDescending(c => c.Price),
+
+                "days_low" => courses.OrderBy(c => c.DurationDays),
+                "days_high" => courses.OrderByDescending(c => c.DurationDays),
+
+                "hours_low" => courses.OrderBy(c => c.DurationHours),
+                "hours_high" => courses.OrderByDescending(c => c.DurationHours),
+
+                _ => courses
+            };
+
+            // 📦 ViewBag (задължително!)
+            ViewBag.Search = search;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.Sort = sort;
+            ViewBag.Certificate = certificate;
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            return View(await courses.ToListAsync());
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
@@ -313,18 +465,68 @@ namespace OnlineCourses2.Controllers
         }
 
         [Authorize(Roles = "Organizer")]
-        public async Task<IActionResult> ManageExpired()
+        public async Task<IActionResult> ManageExpired(
+      string search,
+      string categoryId,
+      string sort,
+      string certificate)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var courses = await _context.Courses
-                .Where(c => c.OrganizerId == userId && c.EndDate < DateTime.Now)
-                .Include(c => c.Category)   // ← ТОВА ЛИПСВА
-                .ToListAsync();
+            var courses = _context.Courses
+                .Where(c => c.OrganizerId == userId)
+                .Where(c => c.EndDate < DateTime.Now)
+                .Include(c => c.Category)
+                .AsQueryable();
 
-            return View(courses);
+            // 🔍 Search
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                courses = courses.Where(c =>
+                    c.Title.Contains(search) ||
+                    c.Category.Name.Contains(search));
+            }
 
+            // 📂 Category
+            if (!string.IsNullOrWhiteSpace(categoryId))
+            {
+                courses = courses.Where(c => c.CategoryId == categoryId);
+            }
+
+            // 🎓 Certificate
+            if (certificate == "yes")
+                courses = courses.Where(c => c.HasCertificate);
+            else if (certificate == "no")
+                courses = courses.Where(c => !c.HasCertificate);
+
+            // 🔽 Sorting
+            courses = sort switch
+            {
+                "name_asc" => courses.OrderBy(c => c.Title),
+                "name_desc" => courses.OrderByDescending(c => c.Title),
+
+                "price_low" => courses.OrderBy(c => c.Price),
+                "price_high" => courses.OrderByDescending(c => c.Price),
+
+                "days_low" => courses.OrderBy(c => c.DurationDays),
+                "days_high" => courses.OrderByDescending(c => c.DurationDays),
+
+                "hours_low" => courses.OrderBy(c => c.DurationHours),
+                "hours_high" => courses.OrderByDescending(c => c.DurationHours),
+
+                _ => courses
+            };
+
+            // 📦 ViewBag (задължително!)
+            ViewBag.Search = search;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.Sort = sort;
+            ViewBag.Certificate = certificate;
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            return View(await courses.ToListAsync());
         }
+
 
     }
 

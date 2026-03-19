@@ -1,0 +1,250 @@
+﻿@model dynamic
+
+<form method="get" class="course-filter">
+
+    <!-- Search -->
+    <input type="text"
+           name="search"
+           value="@ViewBag.Search"
+           class="search-box"
+           placeholder="Търси курс или категория" />
+
+    <!-- Filter button -->
+    <button type="button" id="filterToggle" class="filter-icon">
+        <i class="bi bi-funnel"></i>
+    </button>
+
+    <!-- Filters -->
+    <div id="filterControls" class="filter-row hidden-filter">
+
+        <!-- Category -->
+        <select name="categoryId" class="filter-select category-select">
+            <option value="">Всички категории</option>
+            @foreach (var c in ViewBag.Categories)
+            {
+                <option value="@c.Id"
+                        selected="@(ViewBag.CategoryId == c.Id ? "selected" : null)">
+                    @c.Name
+                </option>
+            }
+        </select>
+
+        <!-- Sort -->
+        <select name="sort" class="filter-select sort-select">
+            <option value="">Без подреждане</option>
+            <option value="name_asc" selected="@(ViewBag.Sort == "name_asc")">Име (A–Z)</option>
+            <option value="name_desc" selected="@(ViewBag.Sort == "name_desc")">Име (Z–A)</option>
+            <option value="price_low" selected="@(ViewBag.Sort == "price_low")">Цена ↑</option>
+            <option value="price_high" selected="@(ViewBag.Sort == "price_high")">Цена ↓</option>
+            <option value="days_low" selected="@(ViewBag.Sort == "days_low")">Дни ↑</option>
+            <option value="days_high" selected="@(ViewBag.Sort == "days_high")">Дни ↓</option>
+            <option value="hours_low" selected="@(ViewBag.Sort == "hours_low")">Часове ↑</option>
+            <option value="hours_high" selected="@(ViewBag.Sort == "hours_high")">Часове ↓</option>
+        </select>
+
+        <!-- Certificate -->
+        <select name="certificate" class="filter-select certificate-select">
+            <option value="">Сертификат (всички)</option>
+            <option value="yes" selected="@(ViewBag.Certificate == "yes")">Да</option>
+            <option value="no" selected="@(ViewBag.Certificate == "no")">Не</option>
+        </select>
+
+        <!-- Buttons -->
+        <button type="submit" class="apply-btn">Приложи</button>
+        <button type="button" id="resetFilters" class="reset-btn">Нулирай</button>
+
+    </div>
+
+</form>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggle = document.getElementById("filterToggle");
+    const panel = document.getElementById("filterControls");
+    const resetBtn = document.getElementById("resetFilters");
+
+    // toggle filter
+    toggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        panel.classList.toggle("hidden-filter");
+    });
+
+    // close only when clicking outside
+    document.addEventListener("click", function (e) {
+        if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+            panel.classList.add("hidden-filter");
+        }
+    });
+
+    // reset (НЕ затваря, защото ще има query param)
+    resetBtn.addEventListener("click", function () {
+        window.location.href = window.location.pathname + "?reset=true";
+    });
+
+    // ако има query → отвори филтъра
+    if (window.location.search.length > 0) {
+        panel.classList.remove("hidden-filter");
+    }
+
+    // махаме reset=true от URL (по желание)
+    if (window.location.search.includes("reset=true")) {
+        const url = new URL(window.location);
+        url.searchParams.delete("reset");
+        window.history.replaceState({}, document.title, url.pathname);
+    }
+
+});
+</script>
+
+<script>
+window.addEventListener("load", function () {
+
+    console.log("Select2 INIT AFTER LOAD");
+
+    if ($.fn.select2) {
+
+       $('.category-select').select2({
+    width: '180px',
+    dropdownParent: $('#filterControls')
+});
+
+$('.sort-select').select2({
+    minimumResultsForSearch: Infinity,
+    width: '180px',
+    dropdownParent: $('#filterControls')
+});
+    $('.certificate-select').select2({
+    minimumResultsForSearch: Infinity,
+    width: '180px',
+    dropdownParent: $('#filterControls')
+});
+
+    } else {
+        console.error("Select2 НЕ е зареден!");
+    }
+});
+
+</script>
+
+
+<style>
+    .course-filter {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        margin-bottom: 20px;
+        margin-left: 65px;
+    }
+
+    .search-box {
+        width: 260px;
+        padding: 8px 14px;
+        border-radius: 20px;
+        border: 2px solid #81d8b0;
+    }
+
+    .filter-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: 2px solid #81d8b0;
+        background: white;
+        color: #81d8b0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-row {
+        top: 55px;
+        right: 0;
+        background: white;
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+        display: flex;
+        gap: 10px;
+        z-index: 100;
+    }
+
+    .hidden-filter {
+        display: none;
+    }
+
+    .filter-select {
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .apply-btn {
+        background-color: #81d8b0;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .reset-btn {
+        background-color: #bfbfbf;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .big-dropdown .select2-results__options {
+    max-height: 150px !important;
+    overflow-y: auto !important;
+}
+/* ограничаваме височината на списъка + скрол */
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 150px !important;
+    overflow-y: auto !important;
+}
+
+/* hover */
+.select2-container--default .select2-results__option--highlighted {
+    background-color: #f0f0f0 !important;
+    color: #333 !important;
+}
+
+/* избран елемент */
+.select2-container--default .select2-results__option--selected {
+    background-color: #e6e6e6 !important;
+    color: #333 !important;
+}
+
+/* стил на затворения Select2 */
+.select2-container--default .select2-selection--single {
+    height: 38px !important;
+    border-radius: 10px !important;
+    border: 1px solid #ddd !important;
+    padding: 6px 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    background-color: #fafafa !important;
+}
+
+/* текст */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #333 !important;
+}
+
+/* стрелка */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100% !important;
+}
+
+/* dropdown меню */
+.select2-dropdown {
+    border-radius: 10px !important;
+    border: 1px solid #ddd !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+</style>
