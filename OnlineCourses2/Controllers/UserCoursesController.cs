@@ -47,8 +47,9 @@ namespace OnlineCourses2.Controllers
         public async Task<IActionResult> All()
         {
             var courses = await _context.Courses
-                .Include(c => c.Category)
-                .ToListAsync();
+     .Include(c => c.Category)
+     .Where(c => c.EndDate >= DateTime.Today)
+     .ToListAsync();
 
             return View(courses);
         }
@@ -71,15 +72,6 @@ namespace OnlineCourses2.Controllers
                 TempData["Error"] = "Курсът е вече пълен.";
                 return RedirectToAction("Details", new { id = course.Id });
             }
-
-            /*if (course.EndDate < DateTime.Today)
-            {
-                TempData["Error"] = "Курсът е изтекъл.";
-                return RedirectToAction("Details", new { id = course.Id });
-            }*/
-
-           
-
             // 3) Проверка дали потребителят вече е записан
             bool already = await _context.Enrollments
                 .AnyAsync(e => e.CourseId == id && e.UserId == userId);
@@ -137,19 +129,70 @@ namespace OnlineCourses2.Controllers
             return RedirectToAction("Participants", "Course", new { id = courseId });
         }
 
-        public async Task<IActionResult> MyCourses()
+        [HttpGet]
+        public async Task<IActionResult> MyCourses(
+       string search,
+       string categoryId,
+       string sort,
+       string certificate)
         {
             var userId = _userManager.GetUserId(User);
 
-            var courses = await _context.Enrollments
+            var courses = _context.Enrollments
                 .Where(e => e.UserId == userId)
                 .Include(e => e.Course)
                 .ThenInclude(c => c.Category)
                 .Select(e => e.Course)
-                .ToListAsync();
+                .AsQueryable();
 
-            return View(courses);
+            // 🔍 Search
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                courses = courses.Where(c =>
+                    c.Title.Contains(search) ||
+                    c.Category.Name.Contains(search));
+            }
+
+            // 📂 Category
+            if (!string.IsNullOrWhiteSpace(categoryId))
+            {
+                courses = courses.Where(c => c.CategoryId == categoryId);
+            }
+
+            // 🎓 Certificate
+            if (certificate == "yes")
+                courses = courses.Where(c => c.HasCertificate);
+            else if (certificate == "no")
+                courses = courses.Where(c => !c.HasCertificate);
+
+            // 🔽 Sorting
+            courses = sort switch
+            {
+                "name_asc" => courses.OrderBy(c => c.Title),
+                "name_desc" => courses.OrderByDescending(c => c.Title),
+
+                "price_low" => courses.OrderBy(c => c.Price),
+                "price_high" => courses.OrderByDescending(c => c.Price),
+
+                "days_low" => courses.OrderBy(c => c.DurationDays),
+                "days_high" => courses.OrderByDescending(c => c.DurationDays),
+
+                "hours_low" => courses.OrderBy(c => c.DurationHours),
+                "hours_high" => courses.OrderByDescending(c => c.DurationHours),
+
+                _ => courses
+            };
+
+            // 📦 ViewBag (задължително!)
+            ViewBag.Search = search;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.Sort = sort;
+            ViewBag.Certificate = certificate;
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            return View(await courses.ToListAsync());
         }
+
 
 
     }

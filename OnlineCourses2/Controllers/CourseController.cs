@@ -280,7 +280,7 @@ namespace OnlineCourses2.Controllers
                 ShortDescription = course.ShortDescription,
                 Description = course.Description,
                 DurationHours = course.DurationHours,
-                DurationDays = course.DurationDays,   // ← важно
+                DurationDays = course.DurationDays,
                 Price = course.Price,
                 MaxParticipants = course.MaxParticipants,
                 CategoryId = course.CategoryId,
@@ -525,6 +525,31 @@ namespace OnlineCourses2.Controllers
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
             return View(await courses.ToListAsync());
+        }
+
+        [Authorize(Roles = "Organizer,Admin")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteExpiredCourse(string id)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Enrollments)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (course == null)
+                return NotFound();
+
+            // Първо трием записванията
+            if (course.Enrollments.Any())
+                _context.Enrollments.RemoveRange(course.Enrollments);
+
+            // После трием курса
+            _context.Courses.Remove(course);
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Курсът беше изтрит успешно.";
+
+            return RedirectToAction("ManageExpired");
         }
 
 
