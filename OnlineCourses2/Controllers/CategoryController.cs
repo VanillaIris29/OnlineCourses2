@@ -24,16 +24,54 @@ namespace OnlineCourses2.Controllers
             var categories = await _context.Categories.ToListAsync();
             return View(categories);
         }
-
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(string search, string sort, int page = 1)
         {
+            int pageSize = 12;
+
+            var query = _context.Categories.AsQueryable();
+
+            // SEARCH
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(c => c.Name.ToLower().Contains(search.ToLower()));
+            }
+
+            // SORT
+            switch (sort)
+            {
+                case "name_asc":
+                    query = query.OrderBy(c => c.Name);
+                    break;
+
+                case "name_desc":
+                    query = query.OrderByDescending(c => c.Name);
+                    break;
+
+                default:
+                    query = query.OrderBy(c => c.Name);
+                    break;
+            }
+
+            // PAGINATION
+            int totalItems = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var categories = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
             var vm = new CreateCategoryViewModel
             {
-                Categories = await _context.Categories
-                    .OrderBy(c => c.Name)
-                    .ToListAsync()
+                Categories = categories
             };
+
+            // ViewBag вместо ViewModel свойства
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Search = search;
+            ViewBag.Sort = sort;
 
             return View(vm);
         }
@@ -46,7 +84,8 @@ namespace OnlineCourses2.Controllers
                 model.Categories = await _context.Categories
                     .OrderBy(c => c.Name)
                     .ToListAsync();
-
+                ViewBag.Search = "";
+                ViewBag.Sort = "";
                 return View(model);
             }
 

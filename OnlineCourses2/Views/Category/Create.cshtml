@@ -49,7 +49,38 @@
         </div>
 
     </form>
+    <form method="get" class="course-filter">
 
+    <!-- Search -->
+    <input type="text"
+           name="search"
+           value="@ViewBag.Search"
+           class="search-box"
+           placeholder="Търси категория..." />
+
+    <!-- Filter button -->
+    <button type="button" id="filterToggle" class="filter-icon">
+        <i class="bi bi-funnel"></i>
+    </button>
+
+    <!-- Filters -->
+    <div id="filterControls" class="filter-row hidden-filter">
+
+        <!-- Sort -->
+        <select name="sort" class="filter-select sort-select">
+    <option value="">Без подреждане</option>
+    <option value="name_asc">Име (A–Z)</option>
+    <option value="name_desc">Име (Z–A)</option>
+</select>
+
+
+        <!-- Buttons -->
+        <button type="submit" class="apply-btn">Приложи</button>
+        <button type="button" id="resetFilters" class="reset-btn">Нулирай</button>
+
+    </div>
+
+</form>
     <!-- Списък с вече създадени категории -->
     <section style="margin-top: 40px;">
         <h3 style="margin-bottom: 20px;">Създадени категории</h3>
@@ -86,30 +117,67 @@
                             @cat.Name
                         </h4>
 
-                        <form asp-controller="Category" asp-action="Delete" asp-route-id="@cat.Id" method="post"
-                              onsubmit="return confirm('Сигурни ли сте, че искате да изтриете тази категория?');">
-                            <button type="submit"
-                                    style="
-                                    background:#bfbfbf;
-                                    color:white;
-                                    border:none;
-                                    padding:8px 18px;
-                                    border-radius:6px;
-                                    cursor:pointer;
-                                    font-weight:500;
-                                    transition:0.2s;
-                                "
-                                    onmouseover="this.style.background='#a5a5a5'"
-                                    onmouseout="this.style.background='#bfbfbf'">
-                                Изтрий
-                            </button>
-                        </form>
+                        <button type="button"
+        onclick="openDeleteModal('@cat.Id')"
+        style="
+            background:#bfbfbf;
+            color:white;
+            border:none;
+            padding:8px 18px;
+            border-radius:6px;
+            cursor:pointer;
+            font-weight:500;
+            transition:0.2s;
+        "
+        onmouseover="this.style.background='#a5a5a5'"
+        onmouseout="this.style.background='#bfbfbf'">
+    Изтрий
+</button>
+
+<div class="custom-modal" id="deleteModal-@cat.Id">
+    <div class="custom-modal-content">
+        <h3>Потвърждение</h3>
+        <p>Сигурни ли сте, че искате да изтриете категория "<strong>@cat.Name</strong>"?</p>
+
+        <div class="modal-buttons">
+            <button type="button"
+                    class="cancel-btn"
+                    onclick="closeDeleteModal('@cat.Id')">
+                Отказ
+            </button>
+
+            <form asp-controller="Category"
+                  asp-action="Delete"
+                  method="post"
+                  style="display:inline;">
+                <input type="hidden" name="id" value="@cat.Id" />
+                <button type="submit" class="delete-btn">Изтрий</button>
+            </form>
+        </div>
+    </div>
+</div>
                     </div>
                 }
             </div>
 
 
         }
+          @if (ViewBag.TotalPages > 1)
+        {
+            <div class="pagination-container">
+                @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                {
+                    <a asp-action="Create"
+                       asp-route-page="@i"
+                       asp-route-search="@ViewBag.Search"
+                       asp-route-sort="@ViewBag.Sort"
+                       class="pagination-item @(i == (int)ViewBag.CurrentPage ? "active" : "")">
+                        @i
+                    </a>
+                }
+            </div>
+        }
+
     </section>
 
 
@@ -155,5 +223,331 @@
 
         });
     </script>
+    <script>
+        function openDeleteModal(id) {
+            document.getElementById("deleteModal-" + id).style.display = "flex";
+        }
+
+        function closeDeleteModal(id) {
+            document.getElementById("deleteModal-" + id).style.display = "none";
+        }
+    </script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggle = document.getElementById("filterToggle");
+    const panel = document.getElementById("filterControls");
+    const resetBtn = document.getElementById("resetFilters");
+
+    toggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        panel.classList.toggle("hidden-filter");
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+            panel.classList.add("hidden-filter");
+        }
+    });
+
+    resetBtn.addEventListener("click", function () {
+        window.location.href = window.location.pathname;
+    });
+
+    if (window.location.search.length > 0) {
+        panel.classList.remove("hidden-filter");
+    }
+
+});
+</script>
+<script>
+window.addEventListener("load", function () {
+
+    console.log("Select2 INIT AFTER LOAD");
+
+    if ($.fn.select2) {
+
+        $('.sort-select').select2({
+            minimumResultsForSearch: Infinity,
+            width: '180px'
+        });
+
+    } else {
+        console.error("Select2 НЕ е зареден!");
+    }
+});
+</script>
+
 
 }
+<style>
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.custom-modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 380px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cancel-btn {
+    background-color: #81d8b0;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background-color: #bfbfbf;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+/* FILTER BAR */
+.course-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 25px 0 10px 0;
+    position: relative;
+}
+
+/* SEARCH INPUT */
+.search-box {
+    width: 260px;
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 2px solid #81d8b0;
+    outline: none;
+    transition: 0.2s;
+}
+
+.search-box:focus {
+    border-color: #5fc49a;
+    box-shadow: 0 0 0 2px rgba(129, 216, 176, 0.2);
+}
+
+/* FILTER BUTTON (иконката) */
+.filter-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #81d8b0;
+    background: white;
+    color: #81d8b0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.filter-icon:hover {
+    background: #81d8b0;
+    color: white;
+}
+
+/* DROPDOWN PANEL */
+.filter-row {
+    top: 55px;
+    left: 0;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+}
+
+/* HIDDEN */
+.hidden-filter {
+    display: none;
+}
+
+/* SELECT */
+.filter-select {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    min-width: 160px;
+    background-color: #fafafa;
+}
+
+/* BUTTONS */
+.apply-btn {
+    background-color: #81d8b0;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.apply-btn:hover {
+    background-color: #5fc49a;
+}
+
+.reset-btn {
+    background-color: #bfbfbf;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.reset-btn:hover {
+    background-color: #a5a5a5;
+}
+.filter-select {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 2px solid #e5e5e5;
+    background: #fafafa;
+    color: #333;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Hover */
+.filter-select:hover {
+    background: #f2f2f2;
+    border-color: #dcdcdc;
+}
+
+/* Когато е фокусиран */
+.filter-select:focus {
+    outline: none;
+    border-color: #81d8b0;
+    box-shadow: 0 0 0 3px rgba(129,216,176,0.25);
+}
+
+/* СТИЛ НА ОПЦИИТЕ В МЕНЮТО */
+.filter-select option {
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Hover на опции (работи в повечето браузъри) */
+.filter-select option:hover {
+    background: #f0f0f0;
+}
+
+/* Избрана опция */
+.filter-select option:checked {
+    background: #e6e6e6;
+    font-weight: 600;
+}
+/* ограничаваме височината на списъка + скрол */
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 150px !important;
+    overflow-y: auto !important;
+}
+
+/* hover */
+.select2-container--default .select2-results__option--highlighted {
+    background-color: #f0f0f0 !important;
+    color: #333 !important;
+}
+
+/* избран елемент */
+.select2-container--default .select2-results__option--selected {
+    background-color: #e6e6e6 !important;
+    color: #333 !important;
+}
+
+/* стил на затворения Select2 */
+.select2-container--default .select2-selection--single {
+    height: 42px !important;
+    border-radius: 12px !important;
+    border: 2px solid #e5e5e5 !important;
+    padding: 6px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    background-color: #fafafa !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+/* текст */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #333 !important;
+    font-size: 15px !important;
+}
+
+/* стрелка */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100% !important;
+}
+
+/* dropdown меню */
+.select2-dropdown {
+    border-radius: 12px !important;
+    border: 1px solid #ddd !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.pagination-container {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pagination-item {
+    padding: 10px 16px;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #e5e5e5;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+.pagination-item:hover {
+    background: #f2f2f2;
+    border-color: #dcdcdc;
+}
+
+.pagination-item.active {
+    background: #81d8b0;
+    color: white;
+    border-color: #81d8b0;
+    box-shadow: 0 2px 8px rgba(129,216,176,0.4);
+}
+</style>

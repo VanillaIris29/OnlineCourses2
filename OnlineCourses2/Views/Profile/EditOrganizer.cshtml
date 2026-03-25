@@ -4,48 +4,152 @@
     <div style="background:white; padding:25px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.08); max-width:600px; width:100%;">
         <h2 style="margin-bottom:20px;">Редакция на профил</h2>
 
-        <form asp-action="EditOrganizer" method="post">
-            <input type="hidden" asp-for="Id" />
+        <form id="editFormOrganizer" asp-action="EditOrganizer" method="post">
+    <input type="hidden" asp-for="Id" />
 
-            <div class="mb-3">
-                <label asp-for="FirstName"></label>
-                <input asp-for="FirstName" class="form-control" />
-            </div>
+    <div class="mb-3">
+        <label asp-for="FirstName">Име</label>
+        <input asp-for="FirstName" class="form-control" />
+    </div>
 
-            <div class="mb-3">
-                <label asp-for="MiddleName"></label>
-                <input asp-for="MiddleName" class="form-control" />
-            </div>
+    <div class="mb-3">
+        <label asp-for="MiddleName">Презиме</label>
+        <input asp-for="MiddleName" class="form-control" />
+    </div>
 
-            <div class="mb-3">
-                <label asp-for="LastName"></label>
-                <input asp-for="LastName" class="form-control" />
-            </div>
+    <div class="mb-3">
+        <label asp-for="LastName">Фамилия</label>
+        <input asp-for="LastName" class="form-control" />
+    </div>
 
-            <div class="mb-3">
-                <label asp-for="City"></label>
-                <input asp-for="City" class="form-control" />
-            </div>
+    <div class="mb-3">
+        <label asp-for="City">Град</label>
+        <input asp-for="City" class="form-control" />
+    </div>
 
-            <div class="mb-3">
-                <label asp-for="Country"></label>
-                <input asp-for="Country" class="form-control" />
-            </div>
+    <div class="mb-3">
+        <label asp-for="Country">Държава</label>
+        <input asp-for="Country" class="form-control" />
+    </div>
 
-            <div class="mb-3">
-                <label asp-for="Age"></label>
-                <input asp-for="Age" class="form-control" />
-            </div>
+    <div class="mb-3">
+        <label asp-for="Age">Години</label>
+        <input asp-for="Age" class="form-control" />
+    </div>
 
-            <button type="submit"
-                    style="background:#81d8b0; color:white; padding:6px 14px; border-radius:6px;">
-                Запази
+    <button type="button"
+        onclick="openSaveModalOrganizer()"
+        style="background:#81d8b0; 
+               color:white; 
+               padding:6px 14px; 
+               border-radius:6px;
+               border:none;
+               outline:none;">
+    Запази
+</button>
+
+
+
+  
+
+</form>
+
+  <div class="custom-modal" id="saveModalOrganizer">
+        <div class="custom-modal-content">
+            <h3>Потвърждение</h3>
+            <p>Сигурни ли сте, че искате да запазите промените?</p>
+
+            <button type="button"
+                    class="cancel-btn"
+                    onclick="closeSaveModalOrganizer()">
+                Отказ
             </button>
 
-            <a asp-action="IndexOrganizer"
-                   style="background:#6c757d; color:white; padding:6px 14px; border-radius:6px; margin-left:10px;">
-                Назад
-            </a>
-        </form>
+            <button type="button"
+                    class="delete-btn"
+                    onclick="submitFormOrganizer()">
+                Запази
+            </button>
+        </div>
+    </div>
+
+<a asp-action="IndexOrganizer"
+   style="background:#bfbfbf;
+          color:white;
+          padding:6px 14px;
+          border-radius:6px;
+          text-decoration:none;
+          display:inline-block;
+          border:none;
+          outline:none;
+          line-height:24px;">
+    Назад
+</a>
     </div>
 </div>
+<style>
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.custom-modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 380px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cancel-btn {
+    background-color: #81d8b0;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background-color: #bfbfbf;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+</style>
+<script>
+    function openSaveModalOrganizer() {
+        document.getElementById("saveModalOrganizer").style.display = "flex";
+    }
+
+    function closeSaveModalOrganizer() {
+        document.getElementById("saveModalOrganizer").style.display = "none";
+    }
+
+    function submitFormOrganizer() {
+        document.getElementById("editFormOrganizer").submit();
+    }
+</script>

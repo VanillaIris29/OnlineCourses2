@@ -253,7 +253,29 @@ namespace OnlineCourses2.Controllers
 
             return View(await courses.ToListAsync());
         }
+        [HttpPost]
+        public async Task<IActionResult> DeleteExpiredCourseAdmin(string id)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Enrollments)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
+            if (course == null)
+                return NotFound();
+
+            // Изтриваме записванията
+            if (course.Enrollments.Any())
+                _context.Enrollments.RemoveRange(course.Enrollments);
+
+            // Изтриваме курса
+            _context.Courses.Remove(course);
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Курсът беше изтрит успешно.";
+
+            return RedirectToAction("ManageAllExpired");
+        }
     }
 }
 

@@ -4,7 +4,7 @@
 
     <h2 style="margin-bottom: 25px;">Редактиране на курс</h2>
 
-    <form method="post" enctype="multipart/form-data"
+    <form id="editForm" method="post" enctype="multipart/form-data"
           style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
 
         <input type="hidden" asp-for="Id" />
@@ -153,11 +153,26 @@
                     </a>
                 }
 
-                <button type="submit"
-                        style="background-color:#81d8b0; color:white; border:none;
-                   padding:10px 25px; border-radius:6px; cursor:pointer;">
-                    Запази промените
-                </button>
+                <button type="button"
+        onclick="openSaveModal()"
+        style="background-color:#81d8b0; color:white; border:none;
+               padding:10px 25px; border-radius:6px; cursor:pointer;">
+    Запази промените
+</button>
+
+<div class="custom-modal" id="saveModal">
+    <div class="custom-modal-content">
+        <h3>Потвърждение</h3>
+        <p>Сигурни ли сте, че искате да запазите промените?</p>
+
+        <div class="modal-buttons">
+            <button class="cancel-btn" onclick="closeSaveModal()">Отказ</button>
+
+            <!-- ТУК submit-ваме формата -->
+            <button type="button" class="delete-btn" onclick="submitForm()">Запази</button>
+        </div>
+    </div>
+</div>
 
             </div>
 
@@ -308,6 +323,19 @@
             });
         });
     </script>
+        <script>
+            function openSaveModal() {
+                document.getElementById("saveModal").style.display = "flex";
+            }
+
+            function closeSaveModal() {
+                document.getElementById("saveModal").style.display = "none";
+            }
+
+            function submitForm() {
+                document.getElementById("editForm").submit();
+            }
+        </script>
 }
 
 
@@ -323,4 +351,57 @@
     .input-error {
         border: 1px solid #e74c3c;
     }
+</style>
+<style>
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.custom-modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 380px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cancel-btn {
+    background-color: #81d8b0;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background-color: #bfbfbf;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
 </style>
