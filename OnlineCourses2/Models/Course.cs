@@ -22,7 +22,7 @@ namespace OnlineCourses2.Models
         [Range(0, 9999)]
         public decimal Price { get; set; }
 
-        [Range(10, 20)]
+        [Range(5, 20)]
         public int MaxParticipants { get; set; }
 
         public int CurrentParticipants { get; set; }

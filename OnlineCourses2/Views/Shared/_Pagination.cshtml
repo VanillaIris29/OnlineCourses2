@@ -1,0 +1,224 @@
+﻿@{
+    int current = ViewBag.CurrentPage;
+    int total = ViewBag.TotalPages;
+    string search = ViewBag.Search;
+    string sort = ViewBag.Sort;
+
+    string action = ViewBag.PaginationAction ?? ViewContext.RouteData.Values["action"].ToString();
+    string controller = ViewBag.PaginationController ?? ViewContext.RouteData.Values["controller"].ToString();
+}
+
+@if (total > 1)
+{
+    <div class="pagination-container">
+
+        <!-- ← Previous -->
+        @if (current > 1)
+        {
+            <a asp-action="@action"
+                   asp-controller="@controller"
+                   asp-route-page="@(current - 1)"
+                   asp-route-search="@search"
+                   asp-route-sort="@sort"
+                   class="pagination-arrow page-link">
+                ←
+            </a>
+        }
+        else
+        {
+            <span class="pagination-arrow disabled">←</span>
+        }
+
+        <!-- Page numbers with "..." -->
+        @{
+            int start = Math.Max(1, current - 2);
+            int end = Math.Min(total, current + 2);
+
+            if (start > 1)
+            {
+                <a asp-action="@action" asp-controller="@controller" asp-route-page="1"
+                   asp-route-search="@search" asp-route-sort="@sort"
+                   class="pagination-item page-link">1</a>
+
+                if (start > 2)
+                {
+                    <span class="pagination-dots">…</span>
+                }
+            }
+
+            for (int i = start; i <= end; i++)
+            {
+                <a asp-action="@action"
+                       asp-controller="@controller"
+                       asp-route-page="@i"
+                       asp-route-search="@search"
+                       asp-route-sort="@sort"
+                       class="pagination-item page-link @(i == current ? "active" : "")">
+                    @i
+                </a>
+            }
+
+            if (end < total)
+            {
+                if (end < total - 1)
+                {
+                    <span class="pagination-dots">…</span>
+                }
+
+                <a asp-action="@action" asp-controller="@controller" asp-route-page="@total"
+                   asp-route-search="@search" asp-route-sort="@sort"
+                   class="pagination-item page-link">@total</a>
+            }
+        }
+
+        <!-- → Next -->
+        @if (current < total)
+        {
+            <a asp-action="@action"
+                   asp-controller="@controller"
+                   asp-route-page="@(current + 1)"
+                   asp-route-search="@search"
+                   asp-route-sort="@sort"
+                   class="pagination-arrow page-link">
+                →
+            </a>
+        }
+        else
+        {
+            <span class="pagination-arrow disabled">→</span>
+        }
+    </div>
+
+    <!-- Input field -->
+    <div class="pagination-input-container">
+        <form method="get" style="display:flex; gap:10px; align-items:center;">
+            <input type="hidden" name="search" value="@search" />
+            <input type="hidden" name="sort" value="@sort" />
+
+            <span>Страница:</span>
+
+            <input type="number"
+                   name="page"
+                   min="1"
+                   max="@total"
+                   value="@current"
+                   class="pagination-input" />
+
+            <button type="submit" class="pagination-go">Отиди</button>
+        </form>
+    </div>
+}
+
+<script>
+    // ⭐ Автоматично скролване нагоре при смяна на страница
+    document.querySelectorAll(".page-link").forEach(link => {
+        link.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    });
+</script>
+<style>
+    .pagination-container {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pagination-item {
+    padding: 10px 16px;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #e5e5e5;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+.pagination-item:hover {
+    background: #f2f2f2;
+    border-color: #dcdcdc;
+}
+
+.pagination-item.active {
+    background: #81d8b0;
+    color: white;
+    border-color: #81d8b0;
+    box-shadow: 0 2px 8px rgba(129,216,176,0.4);
+}
+.pagination-container {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pagination-item,
+.pagination-arrow {
+    padding: 10px 16px;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #e5e5e5;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+.pagination-item:hover,
+.pagination-arrow:hover {
+    background: #f2f2f2;
+    border-color: #dcdcdc;
+}
+
+.pagination-item.active {
+    background: #81d8b0;
+    color: white;
+    border-color: #81d8b0;
+    box-shadow: 0 2px 8px rgba(129,216,176,0.4);
+}
+
+.pagination-arrow.disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+}
+
+.pagination-input-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-input {
+    width: 70px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid #e5e5e5;
+    background: #fafafa;
+}
+
+.pagination-go {
+    background-color: #81d8b0;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.pagination-go:hover {
+    background-color: #5fc49a;
+}
+.pagination-dots {
+    padding: 10px 12px;
+    color: #777;
+    font-weight: 600;
+}
+
+</style>

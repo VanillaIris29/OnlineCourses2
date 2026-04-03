@@ -16,7 +16,25 @@
     <div class="header-main-container">
         <header class="container">
             <nav class="custom-navbar">
-                <a class="brand-logo" asp-controller="Course" asp-action="All">OnlineCourses</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a class="brand-logo" asp-controller="Course" asp-action="All">OnlineCourses</a>
+                }
+                else if (User.IsInRole("Organizer"))
+                {
+                    <a class="brand-logo" asp-controller="Course" asp-action="All">OnlineCourses</a>
+                }
+                else if (User.Identity.IsAuthenticated)
+                {
+                    <a class="brand-logo" asp-controller="UserCourses" asp-action="All">OnlineCourses</a>
+                }
+                else
+                {
+                    <!-- Гост (не е логнат) -->
+                    <a class="brand-logo" asp-controller="UserCourses" asp-action="All">OnlineCourses</a>
+                }
+
+
 
                 @if (User.IsInRole("Admin"))
                 {

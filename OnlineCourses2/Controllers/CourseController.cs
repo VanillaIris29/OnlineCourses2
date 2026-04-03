@@ -21,13 +21,15 @@ namespace OnlineCourses2.Controllers
             _userManager = userManager;
         }
         [Authorize(Roles = "Admin")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageAll(
     string search,
     string categoryId,
     string sort,
-    string certificate)
+    string certificate,
+    int page = 1)
         {
+            int pageSize = 12;
+
             var courses = _context.Courses
                 .Include(c => c.Category)
                 .Include(c => c.Organizer)
@@ -72,16 +74,31 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📦 ViewBag (задължително!)
+            // 📄 Pagination
+            int totalItems = await courses.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var pagedCourses = await courses
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // 📦 ViewBag за универсалния pagination
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
             ViewBag.Search = search;
             ViewBag.CategoryId = categoryId;
             ViewBag.Sort = sort;
             ViewBag.Certificate = certificate;
+
+            ViewBag.PaginationAction = "ManageAll";
+            ViewBag.PaginationController = "Course";
+
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            return View(await courses.ToListAsync());
+            return View(pagedCourses);
         }
-
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -174,8 +191,11 @@ namespace OnlineCourses2.Controllers
     string search,
     string categoryId,
     string sort,
-    string certificate)
+    string certificate,
+    int page = 1)
         {
+            int pageSize = 12;
+
             var courses = _context.Courses
                 .Include(c => c.Category)
                 .Include(c => c.Enrollments)
@@ -199,7 +219,6 @@ namespace OnlineCourses2.Controllers
             // 🎓 Certificate
             if (certificate == "yes")
                 courses = courses.Where(c => c.HasCertificate);
-
             else if (certificate == "no")
                 courses = courses.Where(c => !c.HasCertificate);
 
@@ -221,14 +240,30 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📦 ViewBag (ТОВА Е ВАЖНО)
+            // 📄 Pagination
+            int totalItems = await courses.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var pagedCourses = await courses
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // 📦 ViewBag (универсален pagination)
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
             ViewBag.Search = search;
             ViewBag.CategoryId = categoryId;
             ViewBag.Sort = sort;
             ViewBag.Certificate = certificate;
+
+            ViewBag.PaginationAction = "All";
+            ViewBag.PaginationController = "Course";
+
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            return View(await courses.ToListAsync());
+            return View(pagedCourses);
         }
         [Authorize(Roles = "Admin,Organizer")]
         public async Task<IActionResult> AllWithExpired()
@@ -368,11 +403,14 @@ namespace OnlineCourses2.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin,Organizer")]
         public async Task<IActionResult> Manage(
-      string search,
-      string categoryId,
-      string sort,
-      string certificate)
+    string search,
+    string categoryId,
+    string sort,
+    string certificate,
+    int page = 1)
         {
+            int pageSize = 12;
+
             var user = await _userManager.GetUserAsync(User);
 
             var courses = _context.Courses
@@ -419,14 +457,30 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📦 ViewBag (задължително!)
+            // 📄 Pagination
+            int totalItems = await courses.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var pagedCourses = await courses
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // 📦 ViewBag за универсалния pagination
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
             ViewBag.Search = search;
             ViewBag.CategoryId = categoryId;
             ViewBag.Sort = sort;
             ViewBag.Certificate = certificate;
+
+            ViewBag.PaginationAction = "Manage";
+            ViewBag.PaginationController = "Course";
+
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            return View(await courses.ToListAsync());
+            return View(pagedCourses);
         }
 
 

@@ -44,14 +44,83 @@ namespace OnlineCourses2.Controllers
             return View(course);
         }
 
-        public async Task<IActionResult> All()
+        [AllowAnonymous]
+        public async Task<IActionResult> All(
+     string search,
+     string categoryId,
+     string sort,
+     string certificate,
+     int page = 1)
         {
-            var courses = await _context.Courses
-     .Include(c => c.Category)
-     .Where(c => c.EndDate >= DateTime.Today)
-     .ToListAsync();
+            int pageSize = 12;
 
-            return View(courses);
+            var courses = _context.Courses
+                .Include(c => c.Category)
+                .Where(c => c.EndDate >= DateTime.Today)
+                .AsQueryable();
+
+            // 🔍 Search
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                courses = courses.Where(c =>
+                    c.Title.Contains(search) ||
+                    c.Category.Name.Contains(search));
+            }
+
+            // 📂 Category
+            if (!string.IsNullOrWhiteSpace(categoryId))
+            {
+                courses = courses.Where(c => c.CategoryId == categoryId);
+            }
+
+            // 🎓 Certificate
+            if (certificate == "yes")
+                courses = courses.Where(c => c.HasCertificate);
+            else if (certificate == "no")
+                courses = courses.Where(c => !c.HasCertificate);
+
+            // 🔽 Sorting
+            courses = sort switch
+            {
+                "name_asc" => courses.OrderBy(c => c.Title),
+                "name_desc" => courses.OrderByDescending(c => c.Title),
+
+                "price_low" => courses.OrderBy(c => c.Price),
+                "price_high" => courses.OrderByDescending(c => c.Price),
+
+                "days_low" => courses.OrderBy(c => c.DurationDays),
+                "days_high" => courses.OrderByDescending(c => c.DurationDays),
+
+                "hours_low" => courses.OrderBy(c => c.DurationHours),
+                "hours_high" => courses.OrderByDescending(c => c.DurationHours),
+
+                _ => courses
+            };
+
+            // 📄 Pagination
+            int totalItems = await courses.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var pagedCourses = await courses
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // 📦 ViewBag за универсалния pagination
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
+            ViewBag.Search = search;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.Sort = sort;
+            ViewBag.Certificate = certificate;
+
+            ViewBag.PaginationAction = "All";
+            ViewBag.PaginationController = "Course";
+
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            return View(pagedCourses);
         }
         [HttpPost]
         public async Task<IActionResult> Enroll(string id)
@@ -131,11 +200,14 @@ namespace OnlineCourses2.Controllers
 
         [HttpGet]
         public async Task<IActionResult> MyCourses(
-       string search,
-       string categoryId,
-       string sort,
-       string certificate)
+    string search,
+    string categoryId,
+    string sort,
+    string certificate,
+    int page = 1)
         {
+            int pageSize = 12;
+
             var userId = _userManager.GetUserId(User);
 
             var courses = _context.Enrollments
@@ -183,14 +255,30 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📦 ViewBag (задължително!)
+            // 📄 Pagination
+            int totalItems = await courses.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var pagedCourses = await courses
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // 📦 ViewBag за универсалния pagination
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
             ViewBag.Search = search;
             ViewBag.CategoryId = categoryId;
             ViewBag.Sort = sort;
             ViewBag.Certificate = certificate;
+
+            ViewBag.PaginationAction = "MyCourses";
+            ViewBag.PaginationController = "Course";
+
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
-            return View(await courses.ToListAsync());
+            return View(pagedCourses);
         }
 
 

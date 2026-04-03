@@ -162,21 +162,75 @@
 
 
         }
-          @if (ViewBag.TotalPages > 1)
+         @if (ViewBag.TotalPages > 1)
+{
+    <div class="pagination-container">
+
+        <!-- ← Предишна страница -->
+        @if (ViewBag.CurrentPage > 1)
         {
-            <div class="pagination-container">
-                @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
-                {
-                    <a asp-action="Create"
-                       asp-route-page="@i"
-                       asp-route-search="@ViewBag.Search"
-                       asp-route-sort="@ViewBag.Sort"
-                       class="pagination-item @(i == (int)ViewBag.CurrentPage ? "active" : "")">
-                        @i
-                    </a>
-                }
-            </div>
+            <a asp-action="Create"
+               asp-route-page="@(ViewBag.CurrentPage - 1)"
+               asp-route-search="@ViewBag.Search"
+               asp-route-sort="@ViewBag.Sort"
+               class="pagination-arrow">
+                ←
+            </a>
         }
+        else
+        {
+            <span class="pagination-arrow disabled">←</span>
+        }
+
+        <!-- Номерирани страници -->
+        @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+        {
+            <a asp-action="Create"
+               asp-route-page="@i"
+               asp-route-search="@ViewBag.Search"
+               asp-route-sort="@ViewBag.Sort"
+               class="pagination-item @(i == (int)ViewBag.CurrentPage ? "active" : "")">
+                @i
+            </a>
+        }
+
+        <!-- → Следваща страница -->
+        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+        {
+            <a asp-action="Create"
+               asp-route-page="@(ViewBag.CurrentPage + 1)"
+               asp-route-search="@ViewBag.Search"
+               asp-route-sort="@ViewBag.Sort"
+               class="pagination-arrow">
+                →
+            </a>
+        }
+        else
+        {
+            <span class="pagination-arrow disabled">→</span>
+        }
+    </div>
+
+    <!-- Поле за ръчно въвеждане на страница. <div class="pagination-input-container">
+        <form method="get" style="display:flex; gap:10px; align-items:center;">
+            <input type="hidden" name="search" value="@ViewBag.Search" />
+            <input type="hidden" name="sort" value="@ViewBag.Sort" />
+
+            <span>Страница:</span>
+
+            <input type="number"
+                   name="page"
+                   min="1"
+                   max="@ViewBag.TotalPages"
+                   value="@ViewBag.CurrentPage"
+                   class="pagination-input" />
+
+            <button type="submit" class="pagination-go">Отиди</button>
+        </form>
+    </div> -->
+    
+}
+
 
     </section>
 
@@ -549,5 +603,72 @@ window.addEventListener("load", function () {
     color: white;
     border-color: #81d8b0;
     box-shadow: 0 2px 8px rgba(129,216,176,0.4);
+}
+.pagination-container {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pagination-item,
+.pagination-arrow {
+    padding: 10px 16px;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #e5e5e5;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+.pagination-item:hover,
+.pagination-arrow:hover {
+    background: #f2f2f2;
+    border-color: #dcdcdc;
+}
+
+.pagination-item.active {
+    background: #81d8b0;
+    color: white;
+    border-color: #81d8b0;
+    box-shadow: 0 2px 8px rgba(129,216,176,0.4);
+}
+
+.pagination-arrow.disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+}
+
+.pagination-input-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-input {
+    width: 70px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid #e5e5e5;
+    background: #fafafa;
+}
+
+.pagination-go {
+    background-color: #81d8b0;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.pagination-go:hover {
+    background-color: #5fc49a;
 }
 </style>

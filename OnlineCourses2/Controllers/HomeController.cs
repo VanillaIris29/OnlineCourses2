@@ -17,7 +17,17 @@ namespace OnlineCourses2.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("All", "Course");
+
+            if (User.IsInRole("Admin"))
+                return RedirectToAction("All", "Course");
+
+            if (User.IsInRole("Organizer"))
+                return RedirectToAction("All", "Course");
+
+            return RedirectToAction("All", "UserCourses");
+
         }
 
         public IActionResult Privacy()
