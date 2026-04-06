@@ -1,23 +1,31 @@
 ﻿@page
-@model RegisterConfirmationModel
+@model ResetPasswordConfirmationModel
 @{
-    ViewData["Title"] = "Register confirmation";
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 
-<h1>@ViewData["Title"]</h1>
-@{
-    if (@Model.DisplayConfirmAccountLink)
-    {
-<p>
-    This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
-    Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
-</p>
-    }
-    else
-    {
-<p>
-        Please check your email to confirm your account.
-</p>
-    }
-}
+<div class="modal fade show" id="passwordChangedModal" tabindex="-1" style="display:block; background:rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
 
+            <div class="modal-header">
+                <h5 class="modal-title">Паролата е сменена успешно</h5>
+            </div>
+
+            <div class="modal-body">
+                Можете да влезете с новата си парола.
+            </div>
+
+            <div class="modal-footer">
+                <a href="/Identity/Account/Login" class="btn btn-primary">Към вход</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    setTimeout(function () {
+        window.location.href = "/Identity/Account/Login";
+    }, 2000);
+</script>

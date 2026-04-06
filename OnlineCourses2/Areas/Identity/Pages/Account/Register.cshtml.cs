@@ -50,52 +50,48 @@ namespace OnlineCourses2.Areas.Identity.Pages.Account
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
         public class InputModel
-        {
-        
+{
+    [Required(ErrorMessage = "Полето „Име“ е задължително.")]
+    [Display(Name = "Име")]
+    public string FirstName { get; set; } = null!;
 
-            [Required]
-            [MinLength(2)]
-            [Display(Name = "Име")]
-            public string FirstName { get; set; }
+    [Display(Name = "Презиме")]
+    public string? MiddleName { get; set; }
 
-            [Display(Name = "Презиме")]
-            public string MiddleName { get; set; }
+    [Required(ErrorMessage = "Полето „Фамилия“ е задължително.")]
+    [Display(Name = "Фамилия")]
+    public string LastName { get; set; } = null!;
 
-            [Required]
-            [MinLength(2)]
-            [Display(Name = "Фамилия")]
-            public string LastName { get; set; }
+    [Required(ErrorMessage = "Полето „Възраст“ е задължително.")]
+    [Range(14, 100, ErrorMessage = "Моля, въведете валидна възраст (14).")]
+    [Display(Name = "Възраст")]
+    public int Age { get; set; }
 
-            [Range(14, 100)]
-            [Display(Name = "Възраст")]
-            public int Age { get; set; }
+    [Required(ErrorMessage = "Полето „Град“ е задължително.")]
+    [Display(Name = "Град")]
+    public string City { get; set; } = null!;
 
-            [Required]
-            [Display(Name = "Град")]
-            public string City { get; set; }
+    [Required(ErrorMessage = "Полето „Държава“ е задължително.")]
+    [Display(Name = "Държава")]
+    public string Country { get; set; } = null!;
 
-            [Required]
-            [Display(Name = "Държава")]
-            public string Country { get; set; } = "България";
+    [Required(ErrorMessage = "Полето „Email“ е задължително.")]
+    [EmailAddress(ErrorMessage = "Моля, въведете валиден Email адрес.")]
+    [Display(Name = "Email")]
+    public string Email { get; set; } = null!;
 
-          
+    [Required(ErrorMessage = "Полето „Парола“ е задължително.")]
+    [StringLength(100, ErrorMessage = "Паролата трябва да е поне {2} символа.", MinimumLength = 6)]
+    [DataType(DataType.Password)]
+    [Display(Name = "Парола")]
+    public string Password { get; set; } = null!;
 
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; }
-
-            [Required]
-            [StringLength(100, ErrorMessage = "Паролата трябва да е между {2} и {1} символа.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            [Display(Name = "Парола")]
-            public string Password { get; set; }
-
-            [DataType(DataType.Password)]
-            [Display(Name = "Потвърди паролата")]
-            [Compare("Password", ErrorMessage = "Паролите не съвпадат.")]
-            public string ConfirmPassword { get; set; }
-        }
+    [Required(ErrorMessage = "Моля, потвърдете паролата.")]
+    [DataType(DataType.Password)]
+    [Display(Name = "Потвърди паролата")]
+    [Compare("Password", ErrorMessage = "Паролите не съвпадат.")]
+    public string ConfirmPassword { get; set; } = null!;
+}
 
         public async Task OnGetAsync(string returnUrl = null)
         {

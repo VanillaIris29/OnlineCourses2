@@ -25,7 +25,9 @@
         <p><strong>Крайна дата:</strong> @Model.EndDate.ToString("dd.MM.yyyy")</p>
         <p><strong>Часове продължителност:</strong> @Model.DurationHours часа</p>
         <p><strong>Цена:</strong> @Model.Price €</p>
-        <p><strong>Максимален брой участници:</strong> @Model.MaxParticipants</p>
+        <p><strong>Записани:</strong> @Model.CurrentParticipants / @Model.MaxParticipants</p>
+        <p><strong>Свободни места:</strong> @(Model.MaxParticipants - Model.CurrentParticipants)</p>
+        <h3 style="margin-top: 25px;">Кратко описание</h3>
         <h3 style="margin-top: 25px;">Описание</h3>
         <p>@Model.Description</p>
 

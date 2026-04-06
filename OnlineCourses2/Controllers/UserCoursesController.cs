@@ -123,6 +123,7 @@ namespace OnlineCourses2.Controllers
             return View(pagedCourses);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Enroll(string id)
         {
             var userId = _userManager.GetUserId(User);

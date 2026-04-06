@@ -66,7 +66,10 @@
     }
     else
     {
-        <form method="post" asp-action="Enroll" asp-route-id="@Model.Id">
+            <form method="post"
+                  asp-controller="UserCourses"
+                  asp-action="Enroll"
+                  asp-route-id="@Model.Id">
             <button type="submit"
                     style="background:#a8e6cf; padding:10px 20px; border:none; border-radius:6px; color:white;">
                 Запиши се
