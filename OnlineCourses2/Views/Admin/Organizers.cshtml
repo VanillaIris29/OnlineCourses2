@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<OnlineCourses2.Models.ApplicationUser>
-<style>
-    .hidden-filter {
-        display: none !important;
-    }
-</style>
+
 <div style="
     background:white;
     padding:25px;
@@ -13,46 +9,36 @@
 ">
     <h2 style="margin-bottom:20px;">Организатори</h2>
 
-    <form method="get" class="d-flex align-items-center mb-3" style="gap:10px;">
+    <form method="get" class="course-filter">
 
-        <!-- Search bar -->
+        <!-- Search -->
         <input type="text"
                name="search"
                value="@ViewBag.Search"
-               class="form-control"
-               placeholder="Търси по email"
-               style="max-width: 250px; border-radius: 20px; padding: 6px 12px;" />
+               class="search-box"
+               placeholder="Търси по email" />
 
-        <!-- Filter icon -->
-        <button type="button"
-                id="filterToggle"
-                class="btn"
-                style="border-radius: 50%; width: 40px; height: 40px; padding: 0;
-                       border:2px solid #81d8b0; color:#81d8b0; background:white;">
+        <!-- Filter button -->
+        <button type="button" id="filterToggle" class="filter-icon">
             <i class="bi bi-funnel"></i>
         </button>
 
-        <!-- Hidden filter controls -->
-        <div id="filterControls"
-             class="d-flex align-items-center hidden-filter"
-             style="gap:10px;">
+        <!-- Filters -->
+        <div id="filterControls" class="filter-row hidden-filter">
 
-            <select name="filter"
-                    class="form-select"
-                    style="max-width: 200px; border-radius: 10px; padding: 6px 12px;">
+            <!-- FILTER -->
+            <select name="filter" class="filter-select organizer-filter-select">
                 <option value="">Без филтър</option>
-                <option value="name_asc">Име (A–Z)</option>
-                <option value="name_desc">Име (Z–A)</option>
-                <option value="email_asc">Email (A–Z)</option>
-                <option value="email_desc">Email (Z–A)</option>
-                <option value="city">Град</option>
+                <option value="name_asc" selected="@(ViewBag.Filter == "name_asc")">Име (А-Я)</option>
+                <option value="name_desc" selected="@(ViewBag.Filter == "name_desc")">Име (Я-А)</option>
+                <option value="email_asc" selected="@(ViewBag.Filter == "email_asc")">Имейл (A–Z)</option>
+                <option value="email_desc" selected="@(ViewBag.Filter == "email_desc")">Имейл (Z–A)</option>
+                <option value="city" selected="@(ViewBag.Filter == "city")">Град</option>
             </select>
 
-            <button type="submit"
-                    style="background-color:#81d8b0; color:white; border:none;
-                           padding:6px 14px; border-radius:6px; cursor:pointer; white-space:nowrap;">
-                Приложи
-            </button>
+            <!-- Buttons -->
+            <button type="submit" class="apply-btn">Приложи</button>
+            <button type="button" id="resetFilters" class="reset-btn">Нулирай</button>
 
         </div>
 
@@ -62,7 +48,7 @@
         <thead>
             <tr>
                 <th>Име</th>
-                <th>Email</th>
+                <th>Имейл</th>
                 <th>Град</th>
                 <th></th>
             </tr>
@@ -96,13 +82,134 @@
     </table>
 </div>
 
+<style>
+    .course-filter {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        margin-bottom: 20px;
+    }
 
+    .search-box {
+        width: 260px;
+        padding: 8px 14px;
+        border-radius: 20px;
+        border: 2px solid #81d8b0;
+    }
+
+    .filter-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: 2px solid #81d8b0;
+        background: white;
+        color: #81d8b0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-row {
+        top: 55px;
+        right: 0;
+        background: white;
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+        display: flex;
+        gap: 10px;
+        z-index: 100;
+    }
+
+    .hidden-filter {
+        display: none;
+    }
+
+    .apply-btn {
+        background-color: #81d8b0;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .reset-btn {
+        background-color: #bfbfbf;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    /* SELECT2 */
+    .select2-container--default .select2-selection--single {
+        height: 38px !important;
+        border-radius: 10px !important;
+        border: 1px solid #ddd !important;
+        padding: 6px 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        background-color: #fafafa !important;
+    }
+
+    .select2-dropdown {
+        border-radius: 10px !important;
+        border: 1px solid #ddd !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .select2-results__option--highlighted {
+        background-color: #f0f0f0 !important;
+        color: #333 !important;
+    }
+</style>
 
 <script>
-    const toggle = document.getElementById("filterToggle");
-    const controls = document.getElementById("filterControls");
+    document.addEventListener("DOMContentLoaded", function () {
 
-    toggle.addEventListener("click", () => {
-        controls.classList.toggle("hidden-filter");
+        const toggle = document.getElementById("filterToggle");
+        const panel = document.getElementById("filterControls");
+        const resetBtn = document.getElementById("resetFilters");
+
+        toggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            panel.classList.toggle("hidden-filter");
+        });
+
+
+        resetBtn.addEventListener("click", function () {
+            window.location.href = window.location.pathname + "?reset=true";
+        });
+
+        if (window.location.search.length > 0) {
+            panel.classList.remove("hidden-filter");
+        }
+
+        if (window.location.search.includes("reset=true")) {
+            const url = new URL(window.location);
+            url.searchParams.delete("reset");
+            window.history.replaceState({}, document.title, url.pathname);
+        }
+
+    });
+</script>
+<script>
+    window.addEventListener("load", function () {
+
+        if ($.fn.select2) {
+
+            $('.organizer-filter-select').select2({
+                minimumResultsForSearch: Infinity,
+                width: '200px',
+                dropdownParent: $('#filterControls')
+            });
+
+        } else {
+            console.error("Select2 НЕ е зареден!");
+        }
+
     });
 </script>

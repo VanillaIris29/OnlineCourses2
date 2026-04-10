@@ -122,13 +122,19 @@ namespace OnlineCourses2.Controllers
 
             return View(pagedCourses);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Enroll(string id)
         {
+            if (!User.IsInRole("User"))
+            {
+                return Forbid();
+            }
+
             var userId = _userManager.GetUserId(User);
 
-            // 1) Намираме курса
             var course = await _context.Courses
                 .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -137,40 +143,35 @@ namespace OnlineCourses2.Controllers
                 TempData["Error"] = "Курсът не беше намерен.";
                 return RedirectToAction("All");
             }
+
             if (course.CurrentParticipants >= course.MaxParticipants)
             {
-                TempData["Error"] = "Курсът е вече пълен.";
-                return RedirectToAction("Details", new { id = course.Id });
+                TempData["Error"] = "Курсът е пълен.";
+                return RedirectToAction("Details", new { id });
             }
-            // 3) Проверка дали потребителят вече е записан
+
             bool already = await _context.Enrollments
                 .AnyAsync(e => e.CourseId == id && e.UserId == userId);
 
             if (already)
             {
-                TempData["Error"] = "Вече сте записани за този курс.";
+                TempData["Error"] = "Вече сте записани.";
                 return RedirectToAction("Details", new { id });
             }
 
-            // 4) Записване
-            var enroll = new Enrollment
+            _context.Enrollments.Add(new Enrollment
             {
                 CourseId = id,
                 UserId = userId
-            };
+            });
 
-            _context.Enrollments.Add(enroll);
-
-            // 5) Увеличаваме броя на записаните
             course.CurrentParticipants++;
-            _context.Courses.Update(course);
-
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Успешно се записахте за курса!";
+            TempData["Success"] = "Успешно записване!";
             return RedirectToAction("Details", new { id });
         }
-        
+
         [HttpPost]
         [Authorize(Roles = "Organizer,Admin")]
         public async Task<IActionResult> Remove(string courseId, string userId)

@@ -18,7 +18,7 @@ namespace OnlineCourses2.Controllers
         public IActionResult Index()
         {
             if (!User.Identity.IsAuthenticated)
-                return RedirectToAction("All", "Course");
+                return RedirectToAction("All", "UserCourses");
 
             if (User.IsInRole("Admin"))
                 return RedirectToAction("All", "Course");
