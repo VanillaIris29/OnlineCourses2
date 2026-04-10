@@ -17,7 +17,6 @@ namespace OnlineCourses2.Controllers
         }
 
         // ---------------- USER ----------------
-        [Authorize(Roles = "User")]
         public async Task<IActionResult> IndexUser()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

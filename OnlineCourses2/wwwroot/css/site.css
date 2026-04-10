@@ -14,51 +14,134 @@ html {
 body {
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Предотвратява хоризонтален скрол от диагонала */
+    overflow-x: hidden;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* ?? нов мек background */
+    background: linear-gradient(180deg, #f6fffb 0%, #eefaf5 100%);
 }
 
-/* --- ХЕДЪР И ПАСТЕЛЕН ФОН --- */
+/* --- ХЕДЪР --- */
 .header-main-container {
-    background-color: #a8e6cf !important; /* Точният пастелен цвят от дизайна */
+    background: linear-gradient(135deg, #a8e6cf 0%, #7fd8b6 100%) !important;
     position: relative;
-    padding: 25px 0 60px 0;
+    padding: 20px 0 55px 0;
     width: 100%;
-    border: none;
 }
 
-/* --- БЯЛАТА РАМКА (НАВИГАЦИЯ) --- */
+/* --- NAVBAR (GLASS + FLOATING) --- */
 .custom-navbar {
-    border: 2.4px solid rgba(255, 255, 255, 0.9) !important;
-    border-radius: 50px !important;
-    padding: 10px 35px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50px;
+    padding: 10px 32px;
     display: flex !important;
     justify-content: space-between;
     align-items: center;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 
-/* --- ЛОГО И ЛИНКОВЕ --- */
+/* --- ЛОГО --- */
 .brand-logo {
-    font-size: 22px;
-    font-weight: bold;
-    color: white !important;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    background: linear-gradient(45deg, #ffffff, #eafff6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     text-decoration: none !important;
 }
 
-.nav-links a {
-    color: white !important;
-    text-decoration: none !important;
-    margin: 0 15px;
-    font-weight: 500;
-    transition: opacity 0.2s;
+/* --- NAV LINKS --- */
+.nav-links {
+    display: flex;
+    gap: 18px;
+    align-items: center;
 }
 
-.nav-links a:hover {
-    opacity: 0.8;
+    .nav-links .nav-item {
+        position: relative;
+    }
+
+    .nav-links a {
+        color: rgba(255,255,255,0.95) !important;
+        text-decoration: none !important;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        position: relative;
+        padding: 4px 0;
+        transition: all 0.25s ease;
+    }
+
+        /* ? hover линия */
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -4px;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, #ffffff, #caffea);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-1px);
+        }
+
+    /* --- DROPDOWN --- */
+    /* --- ADMIN DROPDOWN (GREEN GLASS STYLE) --- */
+    .nav-links .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 12px);
+        left: 0;
+        min-width: 200px;
+        padding: 10px 0;
+        /* ?? вместо бяло */
+        background: linear-gradient(135deg, #eafff6, #d9f7ec) !important;
+        backdrop-filter: blur(12px);
+        border-radius: 14px;
+        border: 1px solid rgba(0, 150, 110, 0.15);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.10);
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+        transition: all 0.25s ease;
+        z-index: 9999;
+    }
+
+/* show on hover */
+.nav-item.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
-/* --- LOGIN / LOGOUT СЕКЦИЯ (Оправя подредбата) --- */
+/* dropdown items */
+.nav-links .dropdown-item {
+    padding: 10px 18px;
+    border-radius: 8px;
+    margin: 2px 8px;
+    color: #2d6a5f !important;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+    /* ?? активен item */
+    .nav-links .dropdown-item:hover {
+        background: #b2f2dd !important;
+        color: #004d40 !important;
+        transform: translateX(4px);
+    }
+    .nav-links .dropdown-item + .dropdown-item {
+        border-top: 1px solid rgba(0,0,0,0.05);
+    }
+/* --- AUTH BOX --- */
 .auth-box ul {
     display: flex !important;
     list-style: none !important;
@@ -68,100 +151,87 @@ body {
 }
 
 .auth-box li {
-    margin-left: 15px !important;
+    margin-left: 12px !important;
 }
 
-.auth-box a, 
-.auth-box button, 
+.auth-box a,
+.auth-box button,
 .auth-box span {
-    color: white !important;
+    color: rgba(255,255,255,0.95) !important;
+    font-size: 15px;
+    font-weight: 600;
     text-decoration: none !important;
-    font-weight: 500;
     background: none !important;
     border: none !important;
-    padding: 0 !important;
     cursor: pointer;
 }
 
-/* --- ДИАГОНАЛЪТ (Clip-path) --- */
+.auth-box a,
+.auth-box button {
+    padding: 6px 14px !important;
+    border-radius: 20px;
+    transition: all 0.25s ease;
+}
+
+    .auth-box a:hover,
+    .auth-box button:hover {
+        background: rgba(255,255,255,0.25);
+        transform: translateY(-1px);
+    }
+
+/* --- ДИАГОНАЛ --- */
 .header-diagonal {
     position: absolute;
-    bottom: -119px; /* Долепя се до зеления блок */
+    bottom: -100px;
     left: 0;
-    width: 48%;
-    height: 120px;
-    background-color: #c9ffe5 !important;
+    width: 60%;
+    height: 140px;
+    background: linear-gradient(135deg, #d8fff1, #f4fffb);
     clip-path: polygon(0 0, 100% 0, 0 100%);
     z-index: -1;
 }
 
-/* --- ОСНОВНО СЪДЪРЖАНИЕ --- */
+/* --- CONTENT --- */
 .content-wrapper {
-    margin-top: 100px; /* Прави място за диагонала */
+    margin-top: 90px;
     margin-bottom: 60px;
 }
 
-/* --- БУТОНИ И ФОРМИ (Bootstrap Overrides) --- */
+/* --- BUTTONS --- */
 .btn-custom-green {
     background-color: #88d4b7;
     color: white;
     border-radius: 10px;
     border: none;
     padding: 8px 25px;
+    transition: 0.25s ease;
 }
 
-.btn:focus, .btn:active:focus, .form-control:focus {
+    .btn-custom-green:hover {
+        background-color: #6fc7a7;
+    }
+
+/* focus */
+.btn:focus,
+.btn:active:focus,
+.form-control:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #b2e2d2;
 }
 
-/* --- ФУТЪР --- */
+/* --- FOOTER --- */
 .footer {
     position: absolute;
     bottom: 0;
     width: 100%;
     white-space: nowrap;
     line-height: 60px;
-    background-color: white;
+    background-color: #ffffff;
     border-top: 1px solid #dee2e6;
 }
 
-
-.nav-links {
-    display: flex;
-    gap: 20px;
-    align-items: center;
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none !important;
+    }
 }
-
-    /* Всеки елемент в менюто */
-    .nav-links .nav-item {
-        position: relative;
-    }
-
-    /* Dropdown меню */
-    .nav-links .dropdown-menu {
-        position: absolute;
-        top: calc(100% + 4px);
-        left: 0;
-        min-width: 160px;
-        padding: 0;
-        background-color: #c9ffe5 !important;
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        overflow: hidden;
-        z-index: 9999;
-    }
-
-    /* Елементите вътре */
-    .nav-links .dropdown-item {
-        padding: 10px 15px;
-        text-align: left;
-        color: black !important;
-        background: transparent !important;
-    }
-
-        /* Hover */
-        .nav-links .dropdown-item:hover {
-            background-color: #cccccc !important;
-            color: white !important;
-        }
