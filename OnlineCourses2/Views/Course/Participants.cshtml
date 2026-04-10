@@ -1,4 +1,7 @@
 ﻿@model Course
+@{
+    var courseId = ViewContext.RouteData.Values["id"]?.ToString();
+}
 
 @{
     ViewData["Title"] = "Записани участници";
@@ -32,12 +35,13 @@ else
                             <div style="display:flex; gap:10px; margin-top:15px;">
 
                                 <!-- Бутон Детайли -->
-                                <a asp-controller="Profile"
-                                   asp-action="IndexUser"
-                                   asp-route-id="@e.UserId"
-                                   style="background:#81d8b0; color:white; border:none;
-                          padding:8px 16px; border-radius:6px; font-weight:500;
-                          text-decoration:none; display:inline-block;">
+                                <a asp-controller="Course"
+                                       asp-action="ParticipantDetails"
+                                       asp-route-courseId="@courseId"
+                                       asp-route-userId="@e.UserId"
+                                       style="background:#81d8b0; color:white; border:none;
+                                    padding:8px 16px; border-radius:6px; font-weight:500;
+                                    text-decoration:none; display:inline-block;">
                                     Детайли
                                 </a>
 

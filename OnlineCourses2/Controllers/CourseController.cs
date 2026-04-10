@@ -605,7 +605,53 @@ namespace OnlineCourses2.Controllers
 
             return RedirectToAction("ManageExpired");
         }
+        public async Task<IActionResult> ParticipantDetails(string courseId, string userId)
+        {
+            if (courseId == null || userId == null)
+                return NotFound();
 
+            var currentUserId = _userManager.GetUserId(User);
+
+            // Зареждаме курса + организатора
+            var course = await _context.Courses
+                .Where(c => c.Id == courseId)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.OrganizerId
+                })
+                .FirstOrDefaultAsync();
+
+            if (course == null)
+                return NotFound();
+
+            // Проверка за достъп:
+            // 1) Админ
+            // 2) Организатор на курса
+            if (!User.IsInRole("Admin") && course.OrganizerId != currentUserId)
+                return Forbid();
+
+            // Зареждаме участника чрез Enrollment
+            var participant = await _context.Enrollments
+                .Where(e => e.CourseId == courseId && e.UserId == userId)
+                .Select(e => new AdminUserDetailsViewModel
+                {
+                    Id = e.User.Id,
+                    FirstName = e.User.FirstName,
+                    MiddleName = e.User.MiddleName,
+                    LastName = e.User.LastName,
+                    City = e.User.City,
+                    Country = e.User.Country,
+                    Age = e.User.Age,
+                    Email = e.User.Email
+                })
+                .FirstOrDefaultAsync();
+
+            if (participant == null)
+                return NotFound();
+
+            return View("ParticipantDetails", participant);
+        }
 
     }
 
