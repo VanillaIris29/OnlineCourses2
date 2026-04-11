@@ -32,8 +32,8 @@
         <!-- Sort -->
         <select name="sort" class="filter-select sort-select">
             <option value="">Без подреждане</option>
-            <option value="name_asc" selected="@(ViewBag.Sort == "name_asc")">Име (A–Z)</option>
-            <option value="name_desc" selected="@(ViewBag.Sort == "name_desc")">Име (Z–A)</option>
+            <option value="name_asc" selected="@(ViewBag.Sort == "name_asc")">Име (А–Я)</option>
+            <option value="name_desc" selected="@(ViewBag.Sort == "name_desc")">Име (Я–А)</option>
             <option value="price_low" selected="@(ViewBag.Sort == "price_low")">Цена ↑</option>
             <option value="price_high" selected="@(ViewBag.Sort == "price_high")">Цена ↓</option>
             <option value="days_low" selected="@(ViewBag.Sort == "days_low")">Дни ↑</option>
@@ -69,13 +69,6 @@ document.addEventListener("DOMContentLoaded", function () {
     toggle.addEventListener("click", function (e) {
         e.stopPropagation();
         panel.classList.toggle("hidden-filter");
-    });
-
-    // close only when clicking outside
-    document.addEventListener("click", function (e) {
-        if (!panel.contains(e.target) && !toggle.contains(e.target)) {
-            panel.classList.add("hidden-filter");
-        }
     });
 
     // reset (НЕ затваря, защото ще има query param)

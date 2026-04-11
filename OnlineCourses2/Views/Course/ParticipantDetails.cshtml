@@ -22,10 +22,12 @@
         <p><strong>Град:</strong> @Model.City</p>
         <p><strong>Държава:</strong> @Model.Country</p>
         <p><strong>Години:</strong> @Model.Age</p>
-        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Имейл:</strong> @Model.Email</p>
 
         <div style="margin-top:20px;">
-            <a asp-action="Users"
+            <a asp-action="Participants"
+            asp-controller="Course" 
+                   asp-route-id="@ViewBag.CourseId"
                    style="background-color:#b3b3b3;
                 color:white;
                 border:none;

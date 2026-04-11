@@ -456,10 +456,48 @@
         });
     </script>
     <script>
-        $(document).ready(function() {
-            $('.category-select').select2();
+                $(document).ready(function () {
+            $('.category-select').select2({
+                width: '100%',
+                dropdownAutoWidth: true
+            });
         });
     </script>
 
 }
+<style>
+    /* Избраният елемент (в dropdown списъка) */
+    .select2-container--default .select2-results__option--selected {
+        background-color: #e6e6e6 !important;
+        color: #333 !important;
+    }
+
+    /* Hover върху опциите */
+    .select2-container--default .select2-results__option--highlighted {
+        background-color: #f2f2f2 !important;
+        color: #333 !important;
+    }
+
+    /* Активно/фокусирано поле */
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #ccc !important;
+        box-shadow: none !important;
+    }
+
+    /* Самото затворено поле (като при филтрите) */
+    .select2-container--default .select2-selection--single {
+        background-color: #fafafa !important;
+        border: 1px solid #ddd !important;
+        border-radius: 10px !important;
+        height: 38px !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 6px 10px !important;
+    }
+
+        /* Текст вътре */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #333 !important;
+        }
+</style>
 

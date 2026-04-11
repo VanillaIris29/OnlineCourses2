@@ -501,6 +501,7 @@ namespace OnlineCourses2.Controllers
 
             return RedirectToAction("Manage");
         }
+        [HttpGet("Course/Participants/{id}")]
         [Authorize(Roles = "Organizer,Admin")]
         public async Task<IActionResult> Participants(string id)
         {
@@ -649,7 +650,7 @@ namespace OnlineCourses2.Controllers
 
             if (participant == null)
                 return NotFound();
-
+            ViewBag.CourseId = courseId;
             return View("ParticipantDetails", participant);
         }
 

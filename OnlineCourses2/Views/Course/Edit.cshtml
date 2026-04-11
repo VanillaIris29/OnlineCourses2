@@ -101,7 +101,7 @@
         </div>
 
         <!-- Category -->
-            <div style="margin-bottom: 20px;">
+            <div class="category-wrapper">
                 <label>Категория</label>
 
                 <select asp-for="CategoryId"
@@ -403,5 +403,40 @@
 @@keyframes fadeIn {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
+}
+/* Hover (това е реалният Select2 клас) */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #f2f2f2 !important;
+    color: #333 !important;
+}
+
+/* Избраният елемент */
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #e6e6e6 !important;
+    color: #333 !important;
+}
+
+/* Затвореното поле */
+.select2-container--default .select2-selection--single {
+    background-color: #fafafa !important;
+    border: 1px solid #ddd !important;
+    border-radius: 10px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 6px 10px !important;
+}
+
+/* махаме синьото outline */
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #ccc !important;
+    box-shadow: none !important;
+}
+.category-wrapper .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #f2f2f2 !important;
+}
+
+.category-wrapper .select2-results__option[aria-selected=true] {
+    background-color: #e6e6e6 !important;
 }
 </style>

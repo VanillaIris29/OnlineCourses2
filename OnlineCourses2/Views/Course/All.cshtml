@@ -78,7 +78,12 @@
                             <p style="font-size:14px; color:#888;">
                                 Продължителност: @course.DurationDays дни
                             </p>
-
+                            @if (course.CurrentParticipants >= course.MaxParticipants)
+                            {
+                                <p style="color: gray; font-weight: 600; margin-top: 10px;">
+                                    Курсът е пълен
+                                </p>
+                            }
 
                     </div>
                        

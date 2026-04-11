@@ -1,0 +1,43 @@
+﻿Потребител имейл - парола
+
+ivan@site.com Ivan123!
+
+dimitar@site.com Dimitar123!
+
+nikolay@site.com Nikolay123!
+
+hristo@site.com Hristo123!
+
+martin@site.com Martin123!
+
+boris@site.com Boris123!
+
+kaloyan@site.com Kaloyan123!
+
+daniel@site.com Daniel123!
+
+viktor@site.com Viktor123!
+
+kiril@site.com Kiril123!
+
+filip@site.com Filip123!
+
+mariya@site.com Mariya123!
+
+elena@site.com Elena123!
+
+desi@site.com Desi123!
+viktoriya@site.com Viktoriya123!
+radoslava@site.com Radoslava123!
+anna@site.com Anna123!
+silviya@site.com Silviya123!
+gergana@site.com Gergana123!
+yoana@site.com Yoana123!
+teodora@site.com Teodora123!
+daniela@site.com Daniela123!
+kalina@site.com Kalina123!
+user4@site.com User4123!
+user5@site.com User5123!
+user6@site.com User6123!
+user7@site.com User7123!
+user8@site.com User8123!

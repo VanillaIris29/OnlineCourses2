@@ -94,7 +94,7 @@ namespace OnlineCourses2.Data.Seeders
                 Country = "България",
                 Age = 27
             },
-            "User6123!" // парола за user3
+            "User6123!"
         ),
         (
             new ApplicationUser
@@ -109,7 +109,7 @@ namespace OnlineCourses2.Data.Seeders
                 Country = "България",
                 Age = 30
             },
-            "User7123!" // парола за user4
+            "User7123!" 
         ),
         (
             new ApplicationUser
@@ -124,7 +124,7 @@ namespace OnlineCourses2.Data.Seeders
                 Country = "България",
                 Age = 24
             },
-            "User8123!" // парола за user5
+            "User8123!" 
         ), ( new ApplicationUser { UserName = "ivan@site.com", Email = "ivan@site.com", EmailConfirmed = true, FirstName = "Иван", MiddleName = "Георгиев", LastName = "Иванов", City = "София", Country = "България", Age = 28 }, "Ivan123!" ),
 ( new ApplicationUser { UserName = "dimitar@site.com", Email = "dimitar@site.com", EmailConfirmed = true, FirstName = "Димитър", MiddleName = "Петров", LastName = "Димитров", City = "Пловдив", Country = "България", Age = 34 }, "Dimitar123!" ),
 ( new ApplicationUser { UserName = "nikolay@site.com", Email = "nikolay@site.com", EmailConfirmed = true, FirstName = "Николай", MiddleName = "Стефанов", LastName = "Николов", City = "Варна", Country = "България", Age = 41 }, "Nikolay123!" ),

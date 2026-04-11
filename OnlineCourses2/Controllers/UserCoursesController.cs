@@ -116,7 +116,7 @@ namespace OnlineCourses2.Controllers
             ViewBag.Certificate = certificate;
 
             ViewBag.PaginationAction = "All";
-            ViewBag.PaginationController = "Course";
+            ViewBag.PaginationController = "UserCourses";
 
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
@@ -276,8 +276,8 @@ namespace OnlineCourses2.Controllers
             ViewBag.Certificate = certificate;
 
             ViewBag.PaginationAction = "MyCourses";
-            ViewBag.PaginationController = "Course";
-
+            ViewBag.PaginationController = "UserCourses";
+            
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
             return View(pagedCourses);

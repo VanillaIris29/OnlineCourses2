@@ -45,7 +45,10 @@
     }
     else if (Model.CurrentParticipants >= Model.MaxParticipants)
     {
-        <button class="btn btn-secondary" disabled>Курсът е пълен</button>
+        <p style="color: gray; font-weight: 600; margin-top: 15px;">
+            Курсът е пълен
+        </p>
+
     }
     else if (Model.EndDate < DateTime.Today)
     {

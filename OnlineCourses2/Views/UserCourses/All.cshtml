@@ -4,7 +4,7 @@
 <main style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
 
     <h2 style="margin-bottom: 25px;">Всички курсове</h2>
-
+    @await Html.PartialAsync("_Pagination")
     @if (Model == null || Model.Count == 0)
     {
         <p style="text-align:center; color:#555;">Няма налични курсове.</p>
@@ -73,6 +73,13 @@
                             <p style="font-size:14px; color:#888;">
                                 Продължителност: @course.DurationDays дни
                             </p>
+                            @if (course.CurrentParticipants >= course.MaxParticipants)
+                            {
+                                <p style="color: gray; font-weight: 600; margin-top: 10px;">
+                                    Няма свободни места
+                                </p>
+                            }
+
                         </div>
 
                     </div>
@@ -80,7 +87,7 @@
                 </a>
             }
         </div>
-        @await Html.PartialAsync("_Pagination")
+      @await Html.PartialAsync("_Pagination")
     }
 
 </main>

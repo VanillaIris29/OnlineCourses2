@@ -1,0 +1,12 @@
+﻿Организатор имейл - парола
+
+organizer@site.com Organizer123!
+organizer1@site.com Organizer1123!
+organizer2@site.com "Organizer2123!
+alex@site.com Alex123!
+georgi@site.com Georgi123!
+stefan@site.com Stefan123!
+petar@site.com Petar123!
+kristina@site.com Kristina123!
+snezhana@site.com Snezhana123!
+mihaela@site.com Mihaela123!
