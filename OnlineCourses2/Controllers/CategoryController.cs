@@ -9,6 +9,10 @@ using OnlineCourses2.ViewModels;
 
 namespace OnlineCourses2.Controllers
 {
+    /// <summary>
+    /// Controller for managing course categories. Accessible to Admin and Organizer roles.
+    /// Supports listing, creating, filtering, sorting, pagination, and deleting categories.
+    /// </summary>
     [Authorize(Roles = "Admin,Organizer")]
     public class CategoryController : Controller
     {
@@ -18,12 +22,26 @@ namespace OnlineCourses2.Controllers
         {
             _context = context;
         }
-
+        /// <summary>
+        /// Displays a list of all categories without filtering or pagination.
+        /// </summary>
+        /// <returns>Returns a view containing a list of all categories.</returns>
         public async Task<IActionResult> Index()
         {
             var categories = await _context.Categories.ToListAsync();
             return View(categories);
         }
+        /// <summary>
+        /// Displays the Create Category page with a paginated, searchable,
+        /// and sortable list of existing categories.
+        /// </summary>
+        /// <param name="search">Optional search term for filtering categories by name.</param>
+        /// <param name="sort">Sorting option (name_asc, name_desc).</param>
+        /// <param name="page">Current page number for pagination (1-based).</param>
+        /// <returns>
+        /// Returns a view with a CreateCategoryViewModel containing the filtered,
+        /// sorted, and paginated list of categories.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> Create(string search, string sort, int page = 1)
         {
@@ -31,13 +49,11 @@ namespace OnlineCourses2.Controllers
 
             var query = _context.Categories.AsQueryable();
 
-            // SEARCH
             if (!string.IsNullOrEmpty(search))
             {
                 query = query.Where(c => c.Name.ToLower().Contains(search.ToLower()));
             }
 
-            // SORT
             switch (sort)
             {
                 case "name_asc":
@@ -53,7 +69,6 @@ namespace OnlineCourses2.Controllers
                     break;
             }
 
-            // PAGINATION
             int totalItems = await query.CountAsync();
             int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -67,7 +82,6 @@ namespace OnlineCourses2.Controllers
                 Categories = categories
             };
 
-            // ViewBag вместо ViewModel свойства
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
             ViewBag.Search = search;
@@ -75,7 +89,16 @@ namespace OnlineCourses2.Controllers
 
             return View(vm);
         }
-
+        /// <summary>
+        /// Creates a new category after validating the input and ensuring
+        /// that a category with the same name does not already exist.
+        /// </summary>
+        /// <param name="model">The view model containing the new category name and category list.</param>
+        /// <returns>
+        /// Redirects to Create on success.
+        /// Returns the Create view with validation errors if the model is invalid
+        /// or if a category with the same name already exists.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Create(CreateCategoryViewModel model)
         {
@@ -109,8 +132,15 @@ namespace OnlineCourses2.Controllers
             return RedirectToAction("Create");
         }
 
-
-
+        /// <summary>
+        /// Deletes a category if it has no associated courses.
+        /// </summary>
+        /// <param name="id">The ID of the category to delete.</param>
+        /// <returns>
+        /// Redirects to Create after deletion.
+        /// Returns NotFound if the category does not exist.
+        /// If the category contains courses, sets an error message and redirects to Create.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
@@ -132,8 +162,5 @@ namespace OnlineCourses2.Controllers
 
             return RedirectToAction("Create");
         }
-
-
-
     }
 }

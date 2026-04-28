@@ -51,37 +51,30 @@
     </form>
     <form method="get" class="course-filter">
 
-    <!-- Search -->
     <input type="text"
            name="search"
            value="@ViewBag.Search"
            class="search-box"
            placeholder="Търси категория..." />
 
-    <!-- Filter button -->
     <button type="button" id="filterToggle" class="filter-icon">
         <i class="bi bi-funnel"></i>
     </button>
 
-    <!-- Filters -->
     <div id="filterControls" class="filter-row hidden-filter">
 
-        <!-- Sort -->
         <select name="sort" class="filter-select sort-select">
     <option value="">Без подреждане</option>
     <option value="name_asc">Име (A–Z)</option>
     <option value="name_desc">Име (Z–A)</option>
 </select>
 
-
-        <!-- Buttons -->
         <button type="submit" class="apply-btn">Приложи</button>
         <button type="button" id="resetFilters" class="reset-btn">Нулирай</button>
 
     </div>
 
 </form>
-    <!-- Списък с вече създадени категории -->
     <section style="margin-top: 40px;">
         <h3 style="margin-bottom: 20px;">Създадени категории</h3>
 
@@ -166,7 +159,6 @@
 {
     <div class="pagination-container">
 
-        <!-- ← Предишна страница -->
         @if (ViewBag.CurrentPage > 1)
         {
             <a asp-action="Create"
@@ -182,7 +174,6 @@
             <span class="pagination-arrow disabled">←</span>
         }
 
-        <!-- Номерирани страници -->
         @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
         {
             <a asp-action="Create"
@@ -194,7 +185,6 @@
             </a>
         }
 
-        <!-- → Следваща страница -->
         @if (ViewBag.CurrentPage < ViewBag.TotalPages)
         {
             <a asp-action="Create"
@@ -211,23 +201,7 @@
         }
     </div>
 
-    <!-- Поле за ръчно въвеждане на страница. <div class="pagination-input-container">
-        <form method="get" style="display:flex; gap:10px; align-items:center;">
-            <input type="hidden" name="search" value="@ViewBag.Search" />
-            <input type="hidden" name="sort" value="@ViewBag.Sort" />
-
-            <span>Страница:</span>
-
-            <input type="number"
-                   name="page"
-                   min="1"
-                   max="@ViewBag.TotalPages"
-                   value="@ViewBag.CurrentPage"
-                   class="pagination-input" />
-
-            <button type="submit" class="pagination-go">Отиди</button>
-        </form>
-    </div> -->
+    
     
 }
 
@@ -386,7 +360,6 @@ window.addEventListener("load", function () {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
 }
-/* FILTER BAR */
 .course-filter {
     display: flex;
     align-items: center;
@@ -395,7 +368,6 @@ window.addEventListener("load", function () {
     position: relative;
 }
 
-/* SEARCH INPUT */
 .search-box {
     width: 260px;
     padding: 10px 15px;
@@ -410,7 +382,6 @@ window.addEventListener("load", function () {
     box-shadow: 0 0 0 2px rgba(129, 216, 176, 0.2);
 }
 
-/* FILTER BUTTON (иконката) */
 .filter-icon {
     width: 42px;
     height: 42px;
@@ -430,7 +401,6 @@ window.addEventListener("load", function () {
     color: white;
 }
 
-/* DROPDOWN PANEL */
 .filter-row {
     top: 55px;
     left: 0;
@@ -443,12 +413,10 @@ window.addEventListener("load", function () {
     z-index: 100;
 }
 
-/* HIDDEN */
 .hidden-filter {
     display: none;
 }
 
-/* SELECT */
 .filter-select {
     padding: 8px 12px;
     border-radius: 10px;
@@ -457,7 +425,6 @@ window.addEventListener("load", function () {
     background-color: #fafafa;
 }
 
-/* BUTTONS */
 .apply-btn {
     background-color: #81d8b0;
     color: white;
@@ -497,54 +464,45 @@ window.addEventListener("load", function () {
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-/* Hover */
 .filter-select:hover {
     background: #f2f2f2;
     border-color: #dcdcdc;
 }
 
-/* Когато е фокусиран */
 .filter-select:focus {
     outline: none;
     border-color: #81d8b0;
     box-shadow: 0 0 0 3px rgba(129,216,176,0.25);
 }
 
-/* СТИЛ НА ОПЦИИТЕ В МЕНЮТО */
 .filter-select option {
     padding: 10px;
     border-radius: 8px;
 }
 
-/* Hover на опции (работи в повечето браузъри) */
 .filter-select option:hover {
     background: #f0f0f0;
 }
 
-/* Избрана опция */
 .filter-select option:checked {
     background: #e6e6e6;
     font-weight: 600;
 }
-/* ограничаваме височината на списъка + скрол */
 .select2-container--default .select2-results > .select2-results__options {
     max-height: 150px !important;
     overflow-y: auto !important;
 }
 
-/* hover */
 .select2-container--default .select2-results__option--highlighted {
     background-color: #f0f0f0 !important;
     color: #333 !important;
 }
 
-/* избран елемент */
 .select2-container--default .select2-results__option--selected {
     background-color: #e6e6e6 !important;
     color: #333 !important;
 }
 
-/* стил на затворения Select2 */
 .select2-container--default .select2-selection--single {
     height: 42px !important;
     border-radius: 12px !important;
@@ -557,18 +515,15 @@ window.addEventListener("load", function () {
     transition: 0.2s;
 }
 
-/* текст */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #333 !important;
     font-size: 15px !important;
 }
 
-/* стрелка */
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 100% !important;
 }
 
-/* dropdown меню */
 .select2-dropdown {
     border-radius: 12px !important;
     border: 1px solid #ddd !important;

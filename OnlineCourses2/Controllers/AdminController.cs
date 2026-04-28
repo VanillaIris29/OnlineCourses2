@@ -8,6 +8,10 @@ using OnlineCourses2.ViewModels;
 
 namespace OnlineCourses2.Controllers
 {
+    /// <summary>
+    /// Controller for administrative operations such as managing users,
+    /// organizers, and expired courses. Accessible only to Admin role.
+    /// </summary>
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
@@ -20,18 +24,24 @@ namespace OnlineCourses2.Controllers
 
             _userManager = userManager;
         }
-
+        /// <summary>
+        /// Displays the admin dashboard home page.
+        /// </summary>
+        /// <returns>Returns the Index view.</returns>
         public IActionResult Index()
         {
             return View();
         }
-
+        /// <summary>
+        /// Lists all organizers with optional search and sorting.
+        /// </summary>
+        /// <param name="search">Search term for filtering by email.</param>
+        /// <param name="filter">Sorting option (name_asc, email_desc, city, etc.).</param>
+        /// <returns>Returns a view with a filtered and sorted list of organizers.</returns>
         public async Task<IActionResult> Organizers(string search, string filter)
         {
-            // Взимаме всички потребители, които са в ролята "Organizer"
             var organizers = await _userManager.GetUsersInRoleAsync("Organizer");
 
-            // Търсене
             if (!string.IsNullOrEmpty(search))
             {
                 organizers = organizers
@@ -39,7 +49,6 @@ namespace OnlineCourses2.Controllers
                     .ToList();
             }
 
-            // Филтриране
             organizers = filter switch
             {
                 "name_asc" => organizers.OrderBy(o => o.FirstName).ToList(),
@@ -55,7 +64,12 @@ namespace OnlineCourses2.Controllers
 
             return View(organizers);
         }
-
+        /// <summary>
+        /// Lists all regular users with optional search and sorting.
+        /// </summary>
+        /// <param name="search">Search term for filtering by email.</param>
+        /// <param name="filter">Sorting option (name_asc, age, city, etc.).</param>
+        /// <returns>Returns a view with a filtered and sorted list of users.</returns>
         public async Task<IActionResult> Users(string search, string filter)
         {
             var users = await _userManager.GetUsersInRoleAsync("User");
@@ -83,6 +97,15 @@ namespace OnlineCourses2.Controllers
 
             return View(users);
         }
+
+        /// <summary>
+        /// Displays detailed information about a specific user.
+        /// </summary>
+        /// <param name="id">The ID of the user to display.</param>
+        /// <returns>
+        /// Returns a view with user details,
+        /// or NotFound if the user does not exist.
+        /// </returns>
         public async Task<IActionResult> UserDetails(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -102,11 +125,19 @@ namespace OnlineCourses2.Controllers
                 Country = user.Country,
                 Age = user.Age,
                 Email = user.Email,
-                Role = roles.FirstOrDefault() // ако има една роля
+                Role = roles.FirstOrDefault() 
             };
 
             return View(model);
         }
+        /// <summary>
+        /// Loads the Edit User form with existing user data and available roles.
+        /// </summary>
+        /// <param name="id">The ID of the user to edit.</param>
+        /// <returns>
+        /// Returns a view with an AdminUserEditViewModel,
+        /// or NotFound if the user does not exist.
+        /// </returns>
         public async Task<IActionResult> EditUser(string id)
         {
           
@@ -135,6 +166,14 @@ namespace OnlineCourses2.Controllers
 
             return View(model);
         }
+        /// <summary>
+        /// Updates user information and assigns a new role.
+        /// </summary>
+        /// <param name="model">The view model containing updated user data.</param>
+        /// <returns>
+        /// Redirects to UserDetails on success,
+        /// or returns the EditUser view with validation errors.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> EditUser(AdminUserEditViewModel model)
         {
@@ -149,7 +188,6 @@ namespace OnlineCourses2.Controllers
             if (user == null)
                 return NotFound();
 
-            // Update fields
             user.FirstName = model.FirstName;
             user.MiddleName = model.MiddleName;
             user.LastName = model.LastName;
@@ -160,13 +198,20 @@ namespace OnlineCourses2.Controllers
 
             await _userManager.UpdateAsync(user);
 
-            // Update role
             var currentRoles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, currentRoles);
             await _userManager.AddToRoleAsync(user, model.SelectedRole);
 
             return RedirectToAction("UserDetails", new { id = user.Id });
         }
+        /// <summary>
+        /// Displays detailed information about a specific organizer.
+        /// </summary>
+        /// <param name="id">The ID of the organizer.</param>
+        /// <returns>
+        /// Returns a view with organizer details,
+        /// or NotFound if the organizer does not exist.
+        /// </returns>
         public async Task<IActionResult> OrganizerDetails(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -191,7 +236,14 @@ namespace OnlineCourses2.Controllers
 
             return View(model);
         }
-
+        /// <summary>
+        /// Lists all expired courses with search, filtering, and sorting options.
+        /// </summary>
+        /// <param name="search">Search term for title, category, or organizer name.</param>
+        /// <param name="categoryId">Optional category filter.</param>
+        /// <param name="sort">Sorting option (name_asc, price_low, hours_high, etc.).</param>
+        /// <param name="certificate">Filter by certificate: "yes", "no", or null.</param>
+        /// <returns>Returns a view with a filtered list of expired courses.</returns>
         public async Task<IActionResult> ManageAllExpired(
      string search,
      string categoryId,
@@ -204,7 +256,6 @@ namespace OnlineCourses2.Controllers
                 .Include(c => c.Organizer)
                 .AsQueryable();
 
-            // 🔍 Search
             if (!string.IsNullOrWhiteSpace(search))
             {
                 courses = courses.Where(c =>
@@ -214,19 +265,16 @@ namespace OnlineCourses2.Controllers
  );
             }
 
-            // 📂 Category
             if (!string.IsNullOrWhiteSpace(categoryId))
             {
                 courses = courses.Where(c => c.CategoryId == categoryId);
             }
 
-            // 🎓 Certificate
             if (certificate == "yes")
                 courses = courses.Where(c => c.HasCertificate);
             else if (certificate == "no")
                 courses = courses.Where(c => !c.HasCertificate);
 
-            // 🔽 Sorting
             courses = sort switch
             {
                 "name_asc" => courses.OrderBy(c => c.Title),
@@ -244,7 +292,6 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📦 ViewBag (задължително!)
             ViewBag.Search = search;
             ViewBag.CategoryId = categoryId;
             ViewBag.Sort = sort;
@@ -253,6 +300,14 @@ namespace OnlineCourses2.Controllers
 
             return View(await courses.ToListAsync());
         }
+        /// <summary>
+        /// Deletes an expired course and all its enrollments.
+        /// </summary>
+        /// <param name="id">The ID of the expired course to delete.</param>
+        /// <returns>
+        /// Redirects to ManageAllExpired after deletion,
+        /// or NotFound if the course does not exist.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> DeleteExpiredCourseAdmin(string id)
         {
@@ -263,11 +318,9 @@ namespace OnlineCourses2.Controllers
             if (course == null)
                 return NotFound();
 
-            // Изтриваме записванията
             if (course.Enrollments.Any())
                 _context.Enrollments.RemoveRange(course.Enrollments);
 
-            // Изтриваме курса
             _context.Courses.Remove(course);
 
             await _context.SaveChangesAsync();

@@ -2,9 +2,7 @@
 @await Html.PartialAsync("_CourseFilter")
 
 <main style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
-
     <h2 style="margin-bottom: 25px;">Всички курсове</h2>
-    @await Html.PartialAsync("_Pagination")
     @if (Model == null || Model.Count == 0)
     {
         <p style="text-align:center; color:#555;">Няма налични курсове.</p>

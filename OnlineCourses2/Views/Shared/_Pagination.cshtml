@@ -12,7 +12,6 @@
 {
     <div class="pagination-container">
 
-        <!-- ← Previous -->
         @if (current > 1)
         {
             <a asp-action="@action"
@@ -28,8 +27,6 @@
         {
             <span class="pagination-arrow disabled">←</span>
         }
-
-        <!-- Page numbers with "..." -->
         @{
             int start = Math.Max(1, current - 2);
             int end = Math.Min(total, current + 2);
@@ -71,7 +68,6 @@
             }
         }
 
-        <!-- → Next -->
         @if (current < total)
         {
             <a asp-action="@action"
@@ -91,7 +87,6 @@
 }
 
 <script>
-    // ⭐ Автоматично скролване нагоре при смяна на страница
     document.querySelectorAll(".page-link").forEach(link => {
         link.addEventListener("click", () => {
             window.scrollTo({ top: 0, behavior: "smooth" });

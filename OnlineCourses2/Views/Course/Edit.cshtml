@@ -9,7 +9,6 @@
 
         <input type="hidden" asp-for="Id" />
 
-        <!-- Title -->
         <div style="margin-bottom: 15px;">
             <label>Заглавие</label>
             <input id="title" asp-for="Title"
@@ -18,7 +17,6 @@
             <span id="title-error" class="error"></span>
         </div>
 
-        <!-- Short Description -->
         <div style="margin-bottom: 15px;">
             <label>Кратко описание</label>
             <input id="shortDesc" asp-for="ShortDescription"
@@ -27,7 +25,6 @@
             <span id="shortDesc-error" class="error"></span>
         </div>
 
-        <!-- Description -->
         <div style="margin-bottom: 15px;">
             <label>Описание</label>
             <textarea id="description" asp-for="Description" rows="4"
@@ -36,7 +33,6 @@
             <span id="description-error" class="error"></span>
         </div>
 
-        <!-- Duration hours -->
         <div style="margin-bottom: 15px;">
             <label>Продължителност (часове)</label>
             <input id="duration" asp-for="DurationHours" type="number" min="8" max="30"
@@ -45,7 +41,6 @@
             <span id="duration-error" class="error"></span>
         </div>
 
-        <!-- Price -->
         <div style="margin-bottom: 15px;">
             <label>Цена</label>
             <input id="price" asp-for="Price" type="number" step="0.01" min="1"
@@ -53,7 +48,6 @@
 
             <span id="price-error" class="error"></span>
         </div>
-        <!-- Max Participants -->
         <div style="margin-bottom: 15px;">
             <label>Максимален брой участници</label>
             <input id="maxParticipants" asp-for="MaxParticipants" type="number" min="10" max="20"
@@ -62,7 +56,6 @@
             <span id="participants-error" class="error"></span>
         </div>
 
-        <!-- Duration Days -->
         <div class="form-group" style="margin-bottom:15px;">
             <label>Продължителност (дни)</label>
             <input id="durationDays" asp-for="DurationDays" type="number" min="1"
@@ -71,7 +64,6 @@
             <span id="durationDays-error" class="error"></span>
         </div>
 
-        <!-- Start Date -->
         <div class="form-group" style="margin-bottom:15px;">
             <label>Начална дата</label>
             <input id="startDate" asp-for="StartDate" type="date" class="form-control" />
@@ -79,7 +71,6 @@
             <span id="startDate-error" class="error"></span>
         </div>
 
-        <!-- End Date -->
         <div class="form-group" style="margin-bottom:15px;">
             <label>Крайна дата</label>
             <input asp-for="EndDate" type="date"
@@ -90,7 +81,6 @@
                                        : Model.EndDate.ToString("yyyy-MM-dd"))" />
         </div>
 
-        <!-- Certificate -->
         <div style="margin-bottom: 20px;">
             <label>Сертификат</label>
             <select asp-for="HasCertificate"
@@ -100,7 +90,6 @@
             </select>
         </div>
 
-        <!-- Category -->
             <div class="category-wrapper">
                 <label>Категория</label>
 

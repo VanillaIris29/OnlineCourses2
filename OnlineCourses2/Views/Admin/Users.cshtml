@@ -12,22 +12,18 @@
 
    <form method="get" class="course-filter">
 
-    <!-- Search -->
     <input type="text"
            name="search"
            value="@ViewBag.Search"
            class="search-box"
            placeholder="Търси по email" />
 
-    <!-- Filter button -->
     <button type="button" id="filterToggle" class="filter-icon">
         <i class="bi bi-funnel"></i>
     </button>
 
-    <!-- Filters -->
     <div id="filterControls" class="filter-row hidden-filter">
 
-        <!-- SORT (като при курсовете) -->
         <select name="filter" class="filter-select user-filter-select">
             <option value="">Без филтър</option>
             <option value="name_asc" selected="@(ViewBag.Filter == "name_asc")">Име (А-Я)</option>
@@ -38,7 +34,6 @@
             <option value="age" selected="@(ViewBag.Filter == "age")">Възраст</option>
         </select>
 
-        <!-- Buttons -->
         <button type="submit" class="apply-btn">Приложи</button>
         <button type="button" id="resetFilters" class="reset-btn">Нулирай</button>
 
@@ -146,7 +141,6 @@
         cursor: pointer;
     }
 
-    /* SELECT2 стил (важно!) */
     .select2-container--default .select2-selection--single {
         height: 38px !important;
         border-radius: 10px !important;

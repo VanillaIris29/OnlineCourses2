@@ -9,7 +9,11 @@ using System.Security.Claims;
 
 namespace OnlineCourses2.Controllers
 {
-    //[Authorize(Roles = "Organizer,Admin")]
+    /// <summary>
+    /// Controller responsible for managing courses in the OnlineCourses2 platform.
+    /// Provides functionality for creating, editing, listing, filtering, sorting,
+    /// and deleting courses, as well as managing participants.
+    /// </summary>
     public class CourseController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +24,17 @@ namespace OnlineCourses2.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        /// <summary>
+        /// Displays all active courses for Admin users with search, filtering,
+        /// sorting, and pagination support.
+        /// </summary>
+        /// <param name="search">Optional search term for course title or category name.</param>
+        /// <param name="categoryId">Optional category ID to filter courses by category.</param>
+        /// <param name="sort">Sorting option (e.g. name_asc, price_low, days_high).</param>
+        /// <param name="certificate">Filter by certificate: "yes", "no" or null for all.</param>
+        /// <param name="page">Current page number for pagination (1-based).</param>
+        /// <returns>Returns a view with a paged list of active courses.</returns>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageAll(
     string search,
@@ -36,7 +51,6 @@ namespace OnlineCourses2.Controllers
                 .Where(c => c.EndDate >= DateTime.Now)
                 .AsQueryable();
 
-            // 🔍 Search
             if (!string.IsNullOrWhiteSpace(search))
             {
                 courses = courses.Where(c =>
@@ -44,19 +58,16 @@ namespace OnlineCourses2.Controllers
                     c.Category.Name.Contains(search));
             }
 
-            // 📂 Category
             if (!string.IsNullOrWhiteSpace(categoryId))
             {
                 courses = courses.Where(c => c.CategoryId == categoryId);
             }
 
-            // 🎓 Certificate
             if (certificate == "yes")
                 courses = courses.Where(c => c.HasCertificate);
             else if (certificate == "no")
                 courses = courses.Where(c => !c.HasCertificate);
 
-            // 🔽 Sorting
             courses = sort switch
             {
                 "name_asc" => courses.OrderBy(c => c.Title),
@@ -74,7 +85,6 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📄 Pagination
             int totalItems = await courses.CountAsync();
             int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -83,7 +93,6 @@ namespace OnlineCourses2.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            // 📦 ViewBag за универсалния pagination
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
@@ -99,6 +108,10 @@ namespace OnlineCourses2.Controllers
 
             return View(pagedCourses);
         }
+        /// <summary>
+        /// Displays the Create Course form and loads all available categories.
+        /// </summary>
+        /// <returns>Returns a view with an empty CreateCourseViewModel.</returns>
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -111,7 +124,15 @@ namespace OnlineCourses2.Controllers
 
             return View(vm);
         }
-
+        /// <summary>
+        /// Creates a new course with validation, image upload,
+        /// and automatic EndDate calculation based on StartDate and DurationDays.
+        /// </summary>
+        /// <param name="model">The view model containing course data and uploaded image.</param>
+        /// <returns>
+        /// Redirects to ManageAll (Admin) or Manage (Organizer) on success,
+        /// or returns the Create view with validation errors.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Create(CreateCourseViewModel model)
         {
@@ -137,7 +158,6 @@ namespace OnlineCourses2.Controllers
 
             string? imagePath = null;
 
-            // Handle image upload
             if (model.ImageFile != null)
             {
                 string folder = Path.Combine("wwwroot", "images", "courses");
@@ -186,6 +206,16 @@ namespace OnlineCourses2.Controllers
             }
             return RedirectToAction("Manage");
         }
+        /// <summary>
+        /// Public listing of all active courses with search, filtering,
+        /// sorting, and pagination. Accessible anonymously.
+        /// </summary>
+        /// <param name="search">Optional search term for course title or category name.</param>
+        /// <param name="categoryId">Optional category ID to filter courses.</param>
+        /// <param name="sort">Sorting option (e.g. name_asc, price_low, hours_high).</param>
+        /// <param name="certificate">Filter by certificate: "yes", "no" or null for all.</param>
+        /// <param name="page">Current page number for pagination (1-based).</param>
+        /// <returns>Returns a view with a paged list of active courses.</returns>
         [AllowAnonymous]
         public async Task<IActionResult> All(
     string search,
@@ -202,7 +232,6 @@ namespace OnlineCourses2.Controllers
                 .Where(c => c.EndDate >= DateTime.Today)
                 .AsQueryable();
 
-            // 🔍 Search
             if (!string.IsNullOrWhiteSpace(search))
             {
                 courses = courses.Where(c =>
@@ -210,19 +239,16 @@ namespace OnlineCourses2.Controllers
                     c.Category.Name.Contains(search));
             }
 
-            // 📂 Category
             if (!string.IsNullOrWhiteSpace(categoryId))
             {
                 courses = courses.Where(c => c.CategoryId == categoryId);
             }
 
-            // 🎓 Certificate
             if (certificate == "yes")
                 courses = courses.Where(c => c.HasCertificate);
             else if (certificate == "no")
                 courses = courses.Where(c => !c.HasCertificate);
 
-            // 🔽 Sorting
             courses = sort switch
             {
                 "name_asc" => courses.OrderBy(c => c.Title),
@@ -240,7 +266,6 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📄 Pagination
             int totalItems = await courses.CountAsync();
             int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -249,7 +274,6 @@ namespace OnlineCourses2.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            // 📦 ViewBag (универсален pagination)
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
@@ -264,16 +288,10 @@ namespace OnlineCourses2.Controllers
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
             return View(pagedCourses);
-        }
-        [Authorize(Roles = "Admin,Organizer")]
-        public async Task<IActionResult> AllWithExpired()
-        {
-            var courses = await _context.Courses
-                .Include(c => c.Category)
-                .ToListAsync();
-
-            return View(courses);
-        }
+        } /// <summary>
+          /// Displays only expired courses for Admin and Organizer roles.
+          /// </summary>
+          /// <returns>Returns a view with a list of expired courses.</returns>
         [Authorize(Roles = "Admin,Organizer")]
         public async Task<IActionResult> Expired()
         {
@@ -284,20 +302,14 @@ namespace OnlineCourses2.Controllers
 
             return View(courses);
         }
-
-        [HttpGet]
-        public async Task<IActionResult> MyCourses()
-        {
-            var user = await _userManager.GetUserAsync(User);
-
-            var courses = await _context.Courses
-                .Where(c => c.OrganizerId == user.Id)
-                .Include(c => c.Category)
-                .ToListAsync();
-
-            return View(courses);
-        }
-
+        /// <summary>
+        /// Loads the Edit Course form with existing course data.
+        /// </summary>
+        /// <param name="id">The ID of the course to edit.</param>
+        /// <returns>
+        /// Returns a view with an EditCourseViewModel if found,
+        /// or NotFound if the course does not exist.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -328,6 +340,15 @@ namespace OnlineCourses2.Controllers
 
             return View(vm);
         }
+        /// <summary>
+        /// Updates course information, recalculates EndDate,
+        /// and optionally replaces the course image.
+        /// </summary>
+        /// <param name="model">The view model containing updated course data.</param>
+        /// <returns>
+        /// Redirects to ManageAll (Admin) or Manage (Organizer) on success,
+        /// or returns the Edit view with validation errors.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Edit(EditCourseViewModel model)
         {
@@ -342,7 +363,6 @@ namespace OnlineCourses2.Controllers
             if (course == null)
                 return NotFound();
 
-            // Обновяване на данните
             course.Title = model.Title;
             course.ShortDescription = model.ShortDescription;
             course.Description = model.Description;
@@ -354,10 +374,8 @@ namespace OnlineCourses2.Controllers
             course.HasCertificate = model.HasCertificate;
             course.StartDate = model.StartDate;
 
-            // Най-важното:
             course.EndDate = model.StartDate.AddDays(model.DurationDays);
 
-            // Нова снимка?
             if (model.ImageFile != null)
             {
                 string folder = Path.Combine("wwwroot", "images", "courses");
@@ -385,6 +403,14 @@ namespace OnlineCourses2.Controllers
 
             return RedirectToAction("Manage");
         }
+        /// <summary>
+        /// Displays detailed information about a single course.
+        /// </summary>
+        /// <param name="id">The ID of the course to display.</param>
+        /// <returns>
+        /// Returns a view with the course details,
+        /// or NotFound if the course does not exist.
+        /// </returns>
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -399,7 +425,16 @@ namespace OnlineCourses2.Controllers
 
             return View(course);
         }
-
+        /// <summary>
+        /// Organizer view: lists only the organizer’s active courses
+        /// with search, filtering, sorting, and pagination.
+        /// </summary>
+        /// <param name="search">Optional search term for course title or category name.</param>
+        /// <param name="categoryId">Optional category ID to filter courses.</param>
+        /// <param name="sort">Sorting option (e.g. name_asc, price_high).</param>
+        /// <param name="certificate">Filter by certificate: "yes", "no" or null for all.</param>
+        /// <param name="page">Current page number for pagination (1-based).</param>
+        /// <returns>Returns a view with a paged list of the organizer’s active courses.</returns>
         [HttpGet]
         [Authorize(Roles = "Admin,Organizer")]
         public async Task<IActionResult> Manage(
@@ -419,7 +454,6 @@ namespace OnlineCourses2.Controllers
                 .Include(c => c.Category)
                 .AsQueryable();
 
-            // 🔍 Search
             if (!string.IsNullOrWhiteSpace(search))
             {
                 courses = courses.Where(c =>
@@ -427,19 +461,16 @@ namespace OnlineCourses2.Controllers
                     c.Category.Name.Contains(search));
             }
 
-            // 📂 Category
             if (!string.IsNullOrWhiteSpace(categoryId))
             {
                 courses = courses.Where(c => c.CategoryId == categoryId);
             }
 
-            // 🎓 Certificate
             if (certificate == "yes")
                 courses = courses.Where(c => c.HasCertificate);
             else if (certificate == "no")
                 courses = courses.Where(c => !c.HasCertificate);
 
-            // 🔽 Sorting
             courses = sort switch
             {
                 "name_asc" => courses.OrderBy(c => c.Title),
@@ -457,7 +488,6 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📄 Pagination
             int totalItems = await courses.CountAsync();
             int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -466,7 +496,6 @@ namespace OnlineCourses2.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            // 📦 ViewBag за универсалния pagination
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
@@ -483,7 +512,14 @@ namespace OnlineCourses2.Controllers
             return View(pagedCourses);
         }
 
-
+        /// <summary>
+        /// Deletes a course by ID.
+        /// </summary>
+        /// <param name="id">The ID of the course to delete.</param>
+        /// <returns>
+        /// Redirects to ManageAll for Admin or Manage for Organizer,
+        /// or returns NotFound if the course does not exist.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
@@ -501,6 +537,16 @@ namespace OnlineCourses2.Controllers
 
             return RedirectToAction("Manage");
         }
+        /// <summary>
+        /// Displays participants enrolled in a specific course.
+        /// Accessible to Admin or the course Organizer only.
+        /// </summary>
+        /// <param name="id">The ID of the course whose participants are listed.</param>
+        /// <returns>
+        /// Returns a view with the course and its enrollments,
+        /// NotFound if the course does not exist,
+        /// or Forbid if the organizer is not the owner.
+        /// </returns>
         [HttpGet("Course/Participants/{id}")]
         [Authorize(Roles = "Organizer,Admin")]
         public async Task<IActionResult> Participants(string id)
@@ -518,7 +564,14 @@ namespace OnlineCourses2.Controllers
 
             return View(course);
         }
-
+        /// <summary>
+        /// Organizer view: lists expired courses with search, filtering, and sorting.
+        /// </summary>
+        /// <param name="search">Optional search term for course title or category name.</param>
+        /// <param name="categoryId">Optional category ID to filter courses.</param>
+        /// <param name="sort">Sorting option (e.g. name_asc, days_low).</param>
+        /// <param name="certificate">Filter by certificate: "yes", "no" or null for all.</param>
+        /// <returns>Returns a view with a list of the organizer’s expired courses.</returns>
         [Authorize(Roles = "Organizer")]
         public async Task<IActionResult> ManageExpired(
       string search,
@@ -534,7 +587,6 @@ namespace OnlineCourses2.Controllers
                 .Include(c => c.Category)
                 .AsQueryable();
 
-            // 🔍 Search
             if (!string.IsNullOrWhiteSpace(search))
             {
                 courses = courses.Where(c =>
@@ -542,19 +594,16 @@ namespace OnlineCourses2.Controllers
                     c.Category.Name.Contains(search));
             }
 
-            // 📂 Category
             if (!string.IsNullOrWhiteSpace(categoryId))
             {
                 courses = courses.Where(c => c.CategoryId == categoryId);
             }
 
-            // 🎓 Certificate
             if (certificate == "yes")
                 courses = courses.Where(c => c.HasCertificate);
             else if (certificate == "no")
                 courses = courses.Where(c => !c.HasCertificate);
 
-            // 🔽 Sorting
             courses = sort switch
             {
                 "name_asc" => courses.OrderBy(c => c.Title),
@@ -572,7 +621,6 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📦 ViewBag (задължително!)
             ViewBag.Search = search;
             ViewBag.CategoryId = categoryId;
             ViewBag.Sort = sort;
@@ -581,7 +629,14 @@ namespace OnlineCourses2.Controllers
 
             return View(await courses.ToListAsync());
         }
-
+        /// <summary>
+        /// Deletes an expired course and all its enrollments.
+        /// </summary>
+        /// <param name="id">The ID of the expired course to delete.</param>
+        /// <returns>
+        /// Redirects to ManageExpired after successful deletion,
+        /// or returns NotFound if the course does not exist.
+        /// </returns>
         [Authorize(Roles = "Organizer,Admin")]
         [HttpPost]
         public async Task<IActionResult> DeleteExpiredCourse(string id)
@@ -593,11 +648,9 @@ namespace OnlineCourses2.Controllers
             if (course == null)
                 return NotFound();
 
-            // Първо трием записванията
             if (course.Enrollments.Any())
                 _context.Enrollments.RemoveRange(course.Enrollments);
 
-            // После трием курса
             _context.Courses.Remove(course);
 
             await _context.SaveChangesAsync();
@@ -606,6 +659,17 @@ namespace OnlineCourses2.Controllers
 
             return RedirectToAction("ManageExpired");
         }
+        /// <summary>
+        /// Shows detailed information about a specific participant in a course.
+        /// Accessible to Admin or the course Organizer only.
+        /// </summary>
+        /// <param name="courseId">The ID of the course.</param>
+        /// <param name="userId">The ID of the participant (user).</param>
+        /// <returns>
+        /// Returns a view with participant details,
+        /// NotFound if the course or participant is not found,
+        /// or Forbid if the current user has no access.
+        /// </returns>
         public async Task<IActionResult> ParticipantDetails(string courseId, string userId)
         {
             if (courseId == null || userId == null)
@@ -613,7 +677,6 @@ namespace OnlineCourses2.Controllers
 
             var currentUserId = _userManager.GetUserId(User);
 
-            // Зареждаме курса + организатора
             var course = await _context.Courses
                 .Where(c => c.Id == courseId)
                 .Select(c => new
@@ -626,13 +689,9 @@ namespace OnlineCourses2.Controllers
             if (course == null)
                 return NotFound();
 
-            // Проверка за достъп:
-            // 1) Админ
-            // 2) Организатор на курса
             if (!User.IsInRole("Admin") && course.OrganizerId != currentUserId)
                 return Forbid();
 
-            // Зареждаме участника чрез Enrollment
             var participant = await _context.Enrollments
                 .Where(e => e.CourseId == courseId && e.UserId == userId)
                 .Select(e => new AdminUserDetailsViewModel

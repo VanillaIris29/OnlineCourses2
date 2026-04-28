@@ -1,4 +1,3 @@
-/* --- Œ—ÕŒ¬Õ» Õ¿—“–Œ… » --- */
 html {
     font-size: 14px;
     position: relative;
@@ -16,11 +15,9 @@ body {
     padding: 0;
     overflow-x: hidden;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* ?? ÌÓ‚ ÏÂÍ background */
     background: linear-gradient(180deg, #f6fffb 0%, #eefaf5 100%);
 }
 
-/* --- ’≈ƒ⁄– --- */
 .header-main-container {
     background: linear-gradient(135deg, #a8e6cf 0%, #7fd8b6 100%) !important;
     position: relative;
@@ -28,7 +25,6 @@ body {
     width: 100%;
 }
 
-/* --- NAVBAR (GLASS + FLOATING) --- */
 .custom-navbar {
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 50px;
@@ -41,7 +37,6 @@ body {
     box-shadow: 0 8px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 
-/* --- ÀŒ√Œ --- */
 .brand-logo {
     font-size: 20px;
     font-weight: 700;
@@ -52,7 +47,6 @@ body {
     text-decoration: none !important;
 }
 
-/* --- NAV LINKS --- */
 .nav-links {
     display: flex;
     gap: 18px;
@@ -74,7 +68,6 @@ body {
         transition: all 0.25s ease;
     }
 
-        /* ? hover ÎËÌËˇ */
         .nav-links a::after {
             content: "";
             position: absolute;
@@ -96,15 +89,12 @@ body {
             transform: translateY(-1px);
         }
 
-    /* --- DROPDOWN --- */
-    /* --- ADMIN DROPDOWN (GREEN GLASS STYLE) --- */
     .nav-links .dropdown-menu {
         position: absolute;
         top: calc(100% + 12px);
         left: 0;
         min-width: 200px;
         padding: 10px 0;
-        /* ?? ‚ÏÂÒÚÓ ·ˇÎÓ */
         background: linear-gradient(135deg, #eafff6, #d9f7ec) !important;
         backdrop-filter: blur(12px);
         border-radius: 14px;
@@ -116,13 +106,11 @@ body {
         z-index: 9999;
     }
 
-/* show on hover */
 .nav-item.dropdown:hover .dropdown-menu {
     opacity: 1;
     transform: translateY(0) scale(1);
 }
 
-/* dropdown items */
 .nav-links .dropdown-item {
     padding: 10px 18px;
     border-radius: 8px;
@@ -132,7 +120,6 @@ body {
     transition: all 0.2s ease;
 }
 
-    /* ?? ‡ÍÚË‚ÂÌ item */
     .nav-links .dropdown-item:hover {
         background: #b2f2dd !important;
         color: #004d40 !important;
@@ -141,7 +128,6 @@ body {
     .nav-links .dropdown-item + .dropdown-item {
         border-top: 1px solid rgba(0,0,0,0.05);
     }
-/* --- AUTH BOX --- */
 .auth-box ul {
     display: flex !important;
     list-style: none !important;
@@ -179,7 +165,6 @@ body {
         transform: translateY(-1px);
     }
 
-/* --- ƒ»¿√ŒÕ¿À --- */
 .header-diagonal {
     position: absolute;
     bottom: -100px;
@@ -191,13 +176,11 @@ body {
     z-index: -1;
 }
 
-/* --- CONTENT --- */
 .content-wrapper {
     margin-top: 90px;
     margin-bottom: 60px;
 }
 
-/* --- BUTTONS --- */
 .btn-custom-green {
     background-color: #88d4b7;
     color: white;
@@ -211,14 +194,12 @@ body {
         background-color: #6fc7a7;
     }
 
-/* focus */
 .btn:focus,
 .btn:active:focus,
 .form-control:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #b2e2d2;
 }
 
-/* --- FOOTER --- */
 .footer {
     position: absolute;
     bottom: 0;
@@ -229,7 +210,6 @@ body {
     border-top: 1px solid #dee2e6;
 }
 
-/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .nav-links {
         display: none !important;

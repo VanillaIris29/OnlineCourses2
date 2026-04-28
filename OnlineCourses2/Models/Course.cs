@@ -33,12 +33,10 @@ namespace OnlineCourses2.Models
         public DateTime EndDate { get; set; }
         public int DurationDays { get; set; }
 
-        // Category
         [Required]
         public string CategoryId { get; set; } = null!;
         public Category? Category { get; set; }
 
-        // Organizer
         [Required]
         public string OrganizerId { get; set; } = null!;
         public ApplicationUser? Organizer { get; set; }

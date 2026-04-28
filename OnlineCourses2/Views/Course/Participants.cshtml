@@ -34,7 +34,6 @@ else
                         {
                             <div style="display:flex; gap:10px; margin-top:15px;">
 
-                                <!-- Бутон Детайли -->
                                 <a asp-controller="Course"
                                        asp-action="ParticipantDetails"
                                        asp-route-courseId="@courseId"
@@ -45,19 +44,38 @@ else
                                     Детайли
                                 </a>
 
-                                <!-- Бутон Премахни (сив) -->
-                                <form asp-controller="UserCourses" asp-action="Remove" method="post"
-                                      onsubmit="return confirm('Сигурни ли сте, че искате да премахнете този участник?');">
-                                    <input type="hidden" name="courseId" value="@Model.Id" />
-                                    <input type="hidden" name="userId" value="@e.UserId" />
+                                <button type="button"
+                                        onclick="openParticipantModal('@e.UserId')"
+                                        style="background:#b3b3b3; color:white; border:none;
+                                    padding:8px 16px; border-radius:6px; font-weight:500;">
+                                    Премахни
+                                </button>
+                                <div class="custom-modal" id="participant-modal-@e.UserId">
+                                    <div class="custom-modal-content">
+                                        <h3>Потвърждение</h3>
 
-                                    <button type="submit"
-                                            style="background:#b3b3b3; color:white; border:none;
-                                   padding:8px 16px; border-radius:6px; font-weight:500;">
-                                        Премахни
-                                    </button>
-                                </form>
+                                        <p>
+                                            Сигурни ли сте, че искате да премахнете участника
+                                            <strong>@($"{e.User.FirstName} {e.User.LastName}")</strong>?
+                                        </p>
 
+                                        <div class="modal-buttons">
+                                            <button class="cancel-btn"
+                                                    onclick="closeParticipantModal('@e.UserId')">
+                                                Отказ
+                                            </button>
+
+                                            <form asp-controller="UserCourses"
+                                                  asp-action="Remove"
+                                                  method="post"
+                                                  style="display:inline;">
+                                                <input type="hidden" name="courseId" value="@Model.Id" />
+                                                <input type="hidden" name="userId" value="@e.UserId" />
+                                                <button type="submit" class="delete-btn">Премахни</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         }
 
@@ -66,4 +84,67 @@ else
             </div>
         }
     </div>
+
 }
+<style>
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.custom-modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 380px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cancel-btn {
+    background-color: #81d8b0;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background-color: #bfbfbf;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@@кeyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+</style>
+<script>
+function openParticipantModal(userId) {
+    document.getElementById("participant-modal-" + userId).style.display = "flex";
+}
+
+function closeParticipantModal(userId) {
+    document.getElementById("participant-modal-" + userId).style.display = "none";
+}
+</script>

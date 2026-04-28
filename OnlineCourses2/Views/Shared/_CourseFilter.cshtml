@@ -2,22 +2,18 @@
 
 <form method="get" class="course-filter">
 
-    <!-- Search -->
     <input type="text"
            name="search"
            value="@ViewBag.Search"
            class="search-box"
            placeholder="Търси курс или категория" />
 
-    <!-- Filter button -->
     <button type="button" id="filterToggle" class="filter-icon">
         <i class="bi bi-funnel"></i>
     </button>
 
-    <!-- Filters -->
     <div id="filterControls" class="filter-row hidden-filter">
 
-        <!-- Category -->
         <select name="categoryId" class="filter-select category-select">
             <option value="">Всички категории</option>
             @foreach (var c in ViewBag.Categories)
@@ -29,7 +25,6 @@
             }
         </select>
 
-        <!-- Sort -->
         <select name="sort" class="filter-select sort-select">
             <option value="">Без подреждане</option>
             <option value="name_asc" selected="@(ViewBag.Sort == "name_asc")">Име (А–Я)</option>
@@ -42,14 +37,12 @@
             <option value="hours_high" selected="@(ViewBag.Sort == "hours_high")">Часове ↓</option>
         </select>
 
-        <!-- Certificate -->
         <select name="certificate" class="filter-select certificate-select">
             <option value="">Сертификат (всички)</option>
             <option value="yes" selected="@(ViewBag.Certificate == "yes")">Да</option>
             <option value="no" selected="@(ViewBag.Certificate == "no")">Не</option>
         </select>
 
-        <!-- Buttons -->
         <button type="submit" class="apply-btn">Приложи</button>
         <button type="button" id="resetFilters" class="reset-btn">Нулирай</button>
 
@@ -65,23 +58,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const panel = document.getElementById("filterControls");
     const resetBtn = document.getElementById("resetFilters");
 
-    // toggle filter
     toggle.addEventListener("click", function (e) {
         e.stopPropagation();
         panel.classList.toggle("hidden-filter");
     });
 
-    // reset (НЕ затваря, защото ще има query param)
     resetBtn.addEventListener("click", function () {
         window.location.href = window.location.pathname + "?reset=true";
     });
 
-    // ако има query → отвори филтъра
     if (window.location.search.length > 0) {
         panel.classList.remove("hidden-filter");
     }
 
-    // махаме reset=true от URL (по желание)
     if (window.location.search.includes("reset=true")) {
         const url = new URL(window.location);
         url.searchParams.delete("reset");
@@ -194,25 +183,18 @@ $('.sort-select').select2({
     max-height: 150px !important;
     overflow-y: auto !important;
 }
-/* ограничаваме височината на списъка + скрол */
 .select2-container--default .select2-results > .select2-results__options {
     max-height: 150px !important;
     overflow-y: auto !important;
 }
-
-/* hover */
 .select2-container--default .select2-results__option--highlighted {
     background-color: #f0f0f0 !important;
     color: #333 !important;
 }
-
-/* избран елемент */
 .select2-container--default .select2-results__option--selected {
     background-color: #e6e6e6 !important;
     color: #333 !important;
 }
-
-/* стил на затворения Select2 */
 .select2-container--default .select2-selection--single {
     height: 38px !important;
     border-radius: 10px !important;
@@ -222,18 +204,12 @@ $('.sort-select').select2({
     align-items: center !important;
     background-color: #fafafa !important;
 }
-
-/* текст */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #333 !important;
 }
-
-/* стрелка */
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 100% !important;
 }
-
-/* dropdown меню */
 .select2-dropdown {
     border-radius: 10px !important;
     border: 1px solid #ddd !important;

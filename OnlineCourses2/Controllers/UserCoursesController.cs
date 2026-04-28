@@ -8,6 +8,11 @@ using OnlineCourses2.ViewModels;
 
 namespace OnlineCourses2.Controllers
 {
+    /// <summary>
+    /// Controller responsible for displaying, filtering, and managing course
+    /// interactions for regular users, including browsing, viewing details,
+    /// enrolling, removing enrollments, and listing personal courses.
+    /// </summary>
     public class UserCoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -18,11 +23,23 @@ namespace OnlineCourses2.Controllers
             _context = context;
             _userManager = userManager;
         }
-
+        /// <summary>
+        /// Displays the default UserCourses index page.
+        /// </summary>
+        /// <returns>Returns the Index view.</returns>
         public IActionResult Index()
         {
             return View();
         }
+        /// <summary>
+        /// Displays detailed information about a specific course,
+        /// including whether the current user is enrolled in it.
+        /// </summary>
+        /// <param name="id">The ID of the course to display.</param>
+        /// <returns>
+        /// Returns the course details view,
+        /// NotFound if the course does not exist.
+        /// </returns>
         public async Task<IActionResult> Details(string id)
         {
             if (id == null) return NotFound();
@@ -32,8 +49,6 @@ namespace OnlineCourses2.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (course == null) return NotFound();
-
-            // Проверка дали потребителят е записан
             var userId = _userManager.GetUserId(User);
 
             bool isEnrolled = await _context.Enrollments
@@ -43,7 +58,16 @@ namespace OnlineCourses2.Controllers
 
             return View(course);
         }
-
+        /// <summary>
+        /// Displays all active courses with search, filtering, sorting,
+        /// and pagination. Accessible to anonymous users.
+        /// </summary>
+        /// <param name="search">Optional search term for course title or category name.</param>
+        /// <param name="categoryId">Optional category filter.</param>
+        /// <param name="sort">Sorting option (name_asc, price_low, hours_high, etc.).</param>
+        /// <param name="certificate">Filter by certificate: "yes", "no", or null.</param>
+        /// <param name="page">Current page number for pagination (1-based).</param>
+        /// <returns>Returns a paginated list of active courses.</returns>
         [AllowAnonymous]
         public async Task<IActionResult> All(
      string search,
@@ -59,7 +83,6 @@ namespace OnlineCourses2.Controllers
                 .Where(c => c.EndDate >= DateTime.Today)
                 .AsQueryable();
 
-            // 🔍 Search
             if (!string.IsNullOrWhiteSpace(search))
             {
                 courses = courses.Where(c =>
@@ -67,19 +90,16 @@ namespace OnlineCourses2.Controllers
                     c.Category.Name.Contains(search));
             }
 
-            // 📂 Category
             if (!string.IsNullOrWhiteSpace(categoryId))
             {
                 courses = courses.Where(c => c.CategoryId == categoryId);
             }
 
-            // 🎓 Certificate
             if (certificate == "yes")
                 courses = courses.Where(c => c.HasCertificate);
             else if (certificate == "no")
                 courses = courses.Where(c => !c.HasCertificate);
 
-            // 🔽 Sorting
             courses = sort switch
             {
                 "name_asc" => courses.OrderBy(c => c.Title),
@@ -97,7 +117,6 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📄 Pagination
             int totalItems = await courses.CountAsync();
             int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -106,7 +125,6 @@ namespace OnlineCourses2.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            // 📦 ViewBag за универсалния pagination
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
@@ -122,7 +140,15 @@ namespace OnlineCourses2.Controllers
 
             return View(pagedCourses);
         }
-
+        /// <summary>
+        /// Enrolls the currently logged-in user into a course,
+        /// if the course exists, has available seats, and the user is not already enrolled.
+        /// </summary>
+        /// <param name="id">The ID of the course to enroll in.</param>
+        /// <returns>
+        /// Redirects to the course details page with success or error messages.
+        /// Returns Forbid if the user is not in the User role.
+        /// </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -171,7 +197,15 @@ namespace OnlineCourses2.Controllers
             TempData["Success"] = "Успешно записване!";
             return RedirectToAction("Details", new { id });
         }
-
+        /// <summary>
+        /// Removes a user from a course. Accessible to Organizers and Admins.
+        /// </summary>
+        /// <param name="courseId">The ID of the course.</param>
+        /// <param name="userId">The ID of the user to remove from the course.</param>
+        /// <returns>
+        /// Redirects to the Course Participants page after removal,
+        /// or NotFound if the enrollment or course does not exist.
+        /// </returns>
         [HttpPost]
         [Authorize(Roles = "Organizer,Admin")]
         public async Task<IActionResult> Remove(string courseId, string userId)
@@ -199,7 +233,18 @@ namespace OnlineCourses2.Controllers
 
             return RedirectToAction("Participants", "Course", new { id = courseId });
         }
-
+        /// <summary>
+        /// Displays all courses in which the current user is enrolled,
+        /// with search, filtering, sorting, and pagination.
+        /// </summary>
+        /// <param name="search">Optional search term for course title or category name.</param>
+        /// <param name="categoryId">Optional category filter.</param>
+        /// <param name="sort">Sorting option (name_asc, price_high, days_low, etc.).</param>
+        /// <param name="certificate">Filter by certificate: "yes", "no", or null.</param>
+        /// <param name="page">Current page number for pagination (1-based).</param>
+        /// <returns>
+        /// Returns a paginated list of courses the user is enrolled in.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> MyCourses(
     string search,
@@ -219,7 +264,6 @@ namespace OnlineCourses2.Controllers
                 .Select(e => e.Course)
                 .AsQueryable();
 
-            // 🔍 Search
             if (!string.IsNullOrWhiteSpace(search))
             {
                 courses = courses.Where(c =>
@@ -227,19 +271,16 @@ namespace OnlineCourses2.Controllers
                     c.Category.Name.Contains(search));
             }
 
-            // 📂 Category
             if (!string.IsNullOrWhiteSpace(categoryId))
             {
                 courses = courses.Where(c => c.CategoryId == categoryId);
             }
 
-            // 🎓 Certificate
             if (certificate == "yes")
                 courses = courses.Where(c => c.HasCertificate);
             else if (certificate == "no")
                 courses = courses.Where(c => !c.HasCertificate);
 
-            // 🔽 Sorting
             courses = sort switch
             {
                 "name_asc" => courses.OrderBy(c => c.Title),
@@ -257,7 +298,6 @@ namespace OnlineCourses2.Controllers
                 _ => courses
             };
 
-            // 📄 Pagination
             int totalItems = await courses.CountAsync();
             int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -266,7 +306,6 @@ namespace OnlineCourses2.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            // 📦 ViewBag за универсалния pagination
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
